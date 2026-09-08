@@ -20,10 +20,10 @@ int main(){
 
 
     // // Simulate the positions
-    // std::vector<double> true_poses(steps);
-    // std::vector<double> observations(steps);
+    std::vector<double> true_poses(steps);
+    std::vector<double> observations(steps);
 
-    auto [true_poses, observations] = KF_HELPER::simulate_realworld_neato(config);
+    std::tie(true_poses, observations) = KF_HELPER::simulate_realworld_neato(config);
 
     // std::cout << "The observed neato points are:" << observations << std::endl;
     // std::cout << "The simulated neato points are:" << true_poses << std::endl;
@@ -33,14 +33,20 @@ int main(){
     for (const double& z : true_poses) std::cout << z << " ";
     std::cout << "\n";
 
-
+    std::vector<Eigen::Vector2d> x_filter;
+    std::vector<Eigen::Matrix2d> P_filter;
 
     // Create a kalman filter class
     KF::KalmanFilter kf(config);
     kf.setState();
-    auto [x_filter, P_filter] = kf.solve(observations);
+    std::tie(x_filter, P_filter) = kf.solve(observations);
 
+
+    std::cout << "Initial state estimate: " << x_filter.back().transpose() << std::endl;
     std::cout << "Final state estimate: " << x_filter.back().transpose() << std::endl;
+
+    // for (const Eigen::Vector2d& i : x_filter) std::cout << i << " ";
+    // std::cout << "\n";
  
     return 0;
 }
