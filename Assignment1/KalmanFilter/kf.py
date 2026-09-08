@@ -1,6 +1,7 @@
 import numpy as np
 import scipy as sp
 import math
+import sys
 import matplotlib.pyplot as plt
 
 # Helper code adapted from filterpy and https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/kf_book/mkf_internal.py
@@ -162,6 +163,7 @@ def simulate_realworld_neato(sensor_var, process_var, vel=1.0, step=1, dt=1.):
     xs, zs = [] ,[]
     for i in range(step):
         v = vel + (np.random.randn() * process_std)
+        print("V:", v)
         x += v * dt  # simple velocity based update
         xs.append(x)
         zs.append(x + np.random.randn() * sensor_std)  # noise corrupted observation
@@ -256,7 +258,7 @@ def test_sim():
     plt.legend()
     plt.show()
 
-TESTING = False
+TESTING = True
 TYPE_HINTS = True
 SHOW_PLOTS = False
 
@@ -267,8 +269,10 @@ def main():
     # Test the update and predict step
     if TESTING:
         test_sim()
-        test_predict()
-        test_update()
+        # test_predict()
+        # test_update()
+
+    sys.exit()
 
     # Model Configs
     steps = 50

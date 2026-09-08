@@ -2,11 +2,18 @@
 
 #include <Eigen/Dense>
 #include <tuple>
-#include <array
+#include <array>
+
 
 namespace KF_HELPER{
 
-using Mat2d = Eigen::Matrix2d
+struct Kf_Config{
+    int dt;
+    int steps;
+    double robot_vel;
+    double sensor_var;
+    double process_var;
+};
 
 std::tuple<double, double, double> 
 covariance_ellipse(
@@ -15,16 +22,10 @@ covariance_ellipse(
 );
 
 
-std::pair<std::array<float, dt>, std::array<float, dt>>
+// vector because we don't know dt yet
+std::pair<std::vector<double>, std::vector<double>>
 simulate_realworld_neato(
-    int sensor_var;
-    int process_var;
-
-    float vel;
-    int step;
-    float dt;
+    const KF_HELPER::Kf_Config& config
 );
-
-
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kf_helper.hpp"
 #include <Eigen/Dense>
 #include <utility>
 
@@ -8,15 +9,11 @@ namespace KF{
 class KalmanFilter{
     public:
         KalmanFilter(
-            const int dt,
-            const int steps,
-            const double robot_vel,
-            const double sensor_var,
-            const double process_var
+            const KF_HELPER::Kf_Config& config
         );
 
         // Sets the initial state and covariance before running predict/update.
-        void setState(const Eigen::Vector2d& x0, const Eigen::Matrix2d& P0);
+        void setState();
 
         // Returns a white noise model Q according to dt and var
         Eigen::Matrix2d
@@ -35,6 +32,11 @@ class KalmanFilter{
             double z, 
             const Eigen::RowVector2d& H, 
             double R
+        );
+
+        std::pair<std::vector<double>, std::vector<double>>
+        solve(
+            const std::vector<double> &observations
         );
 
         // Accessors - avoid copying

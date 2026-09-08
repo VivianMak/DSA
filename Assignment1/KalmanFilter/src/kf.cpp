@@ -3,26 +3,41 @@
 namespace KF{
 
     KalmanFilter::KalmanFilter(
-        const int dt,
-        const int steps,
-        const double robot_vel,
-        const double sensor_var,
-        const double process_var
+        const KF_HELPER::Kf_Config& config
     ): 
-        dt_(dt), 
-        steps_(steps),
-        robot_vel_(robot_vel),
-        sensor_var_(sensor_var),
-        process_var_(process_var)
+        dt_(config.dt), 
+        steps_(config.steps),
+        robot_vel_(config.robot_vel),
+        sensor_var_(config.sensor_var),
+        process_var_(config.process_var)
 
     {   
+    
+    }
         /*
         Set initial state of the kalman filter
         */
-        void KalmanFilter::setState(const Eigen::Vector2d& x0, const Eigen::Matrix2d& P0)
+        void KalmanFilter::setState()
         {
-            x_ = x0;
-            P_ = P0;
+
+            // Initial guess of state
+            Eigen::RowVector2d x(10.0, 4.5)
+            // Initial variance of state var
+            Eigen::Matrix2d P << 500.0, 0,
+                                 0,  49.0;
+
+            // Process model
+            Eigen::Matrix2d F << 1, dt_,
+                                 0, 1;
+
+            // Process noise
+            Eigen::Matrix2d Q = KalmanFilter::get_Q(dt_, process_var_);
+
+            // Measurement model
+            std::array<double, 2> H(1.0, 0.0);
+            
+            // Measurement variance
+            std::array<double, 1> R(sensor_var_);
         }
 
         /*
@@ -74,6 +89,24 @@ namespace KF{
             x_ += K * y;
             P_ = P_ - K * H * P_;
         }
-    }
+
+        std::pair<std::vector<double>, std::vector<double>>
+        KalmanFilter::solve(const std::vector<double> &observations)
+        {
+            std::cout << "Solving the global optimization..." << std::endl;
+
+            std::vector<double> x_filter;
+            std::vector<double> P_filter;
+
+            for (z = 0; z < observations; z++)
+            {
+                x_predict, P_predict = KalmanFilter::predict(x, P, F, Q);
+                x, P = KalmanFilter::update(&x_predict, &P_predict, z, H, R);
+                x_filter.push_back(x);
+                P_filter.push_back(P);
+            }
+            
+            return {x_filter, P_filter};
+        }
 
 } // namespace KF
