@@ -1,4 +1,5 @@
 #include "kf.hpp"
+#include <iostream>
 
 namespace KF{
 
@@ -21,30 +22,31 @@ namespace KF{
         {
 
             // Initial guess of state
-            Eigen::RowVector2d x(10.0, 4.5)
+            x_ = Eigen::Vector2d(10.0, 4.5);
+
             // Initial variance of state var
-            Eigen::Matrix2d P << 500.0, 0,
-                                 0,  49.0;
+            P_ << 500.0, 0.0,
+                  0.0,  49.0;
 
             // Process model
-            Eigen::Matrix2d F << 1, dt_,
-                                 0, 1;
+            F_ << 1.0, dt_,
+                 0.0, 1.0;
 
             // Process noise
-            Eigen::Matrix2d Q = KalmanFilter::get_Q(dt_, process_var_);
+            Q_ = get_Q(dt_, process_var_);
 
             // Measurement model
-            std::array<double, 2> H(1.0, 0.0);
+            H_ << 1.0, 0.0;
             
             // Measurement variance
-            std::array<double, 1> R(sensor_var_);
+            R_ = sensor_var_;
         }
 
         /*
         Returns a white noise model Q according to dt and var
         */
         Eigen::Matrix2d 
-        KalmanFilter::get_Q(double dt, double var)
+        KalmanFilter::get_Q(int dt, double var)
         {
             const double q01 = 0.5 * var * dt * dt;
             const double q00 = q01 * q01;
@@ -61,49 +63,53 @@ namespace KF{
         Returns a prediction update for pose and pose covariance according to the process model
         */
         std::pair<Eigen::Vector2d, Eigen::Matrix2d>
-        KalmanFilter::predict(const Eigen::Matrix2d& F, const Eigen::Matrix2d& Q)
+        KalmanFilter::predict()
         {
             // edit the pose and covariance directly
-            x_ = F * x_;
-            P_ = F * P_ * F.transpose() + Q;
+            x_ = F_ * x_;
+            P_ = F_ * P_ * F_.transpose() + Q_;
             ++steps_;
 
-            return {x_, P_}
+            return {x_, P_};
         }
         
         /*
         Performs an update to x, P given observation z according to measurement model H and measurement noise R
         */
-        void KalmanFilter::update(double z, const Eigen::RowVector2d& H, double R)
+        void KalmanFilter::update(double z)
         {
             // Innovation covariance: S = H P H^T + R   (1x1, extracted as scalar)
-            double S = (H * P_ * H.transpose())(0, 0) + R;
+            double S = (H_ * P_ * H_.transpose())(0, 0) + R_;
 
             // Kalman gain: K = P H^T S^-1   (2x1)
-            Eigen::Vector2d K = (P_ * H.transpose()) / S;
+            Eigen::Vector2d K = (P_ * H_.transpose()) / S;
 
             // Innovation (measurement residual): y = z - H x   (scalar)
-            double y = z - (H * x_)(0, 0);
+            double y = z - (H_ * x_)(0, 0);
 
             // Update state estimate and covariance
             x_ += K * y;
-            P_ = P_ - K * H * P_;
+            P_ = P_ - K * H_ * P_;
         }
 
-        std::pair<std::vector<double>, std::vector<double>>
-        KalmanFilter::solve(const std::vector<double> &observations)
+        std::pair<std::vector<Eigen::Vector2d>, std::vector<Eigen::Matrix2d>>
+        KalmanFilter::solve(const std::vector<double>& observations)
         {
             std::cout << "Solving the global optimization..." << std::endl;
 
-            std::vector<double> x_filter;
-            std::vector<double> P_filter;
+            std::vector<Eigen::Vector2d> x_filter;
+            std::vector<Eigen::Matrix2d> P_filter;
 
-            for (z = 0; z < observations; z++)
+            // Pre allocate size
+            x_filter.reserve(observations.size());
+            P_filter.reserve(observations.size());
+
+            for (double z : observations)
             {
-                x_predict, P_predict = KalmanFilter::predict(x, P, F, Q);
-                x, P = KalmanFilter::update(&x_predict, &P_predict, z, H, R);
-                x_filter.push_back(x);
-                P_filter.push_back(P);
+                predict();
+                update(z);
+                x_filter.push_back(x_);
+                P_filter.push_back(P_);
             }
             
             return {x_filter, P_filter};

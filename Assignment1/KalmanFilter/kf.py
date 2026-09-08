@@ -258,7 +258,7 @@ def test_sim():
     plt.legend()
     plt.show()
 
-TESTING = True
+TESTING = False
 TYPE_HINTS = True
 SHOW_PLOTS = False
 
@@ -272,7 +272,7 @@ def main():
         # test_predict()
         # test_update()
 
-    sys.exit()
+    # sys.exit()
 
     # Model Configs
     steps = 50
@@ -303,6 +303,8 @@ def main():
         # show once
         if TYPE_HINTS: 
             TYPE_HINTS=False
+
+    print("final stateestimate is:", x_filter[-1])
 
     if SHOW_PLOTS:
         # Plot the results
