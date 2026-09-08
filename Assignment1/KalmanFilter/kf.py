@@ -5,6 +5,10 @@ import matplotlib.pyplot as plt
 
 # Helper code adapted from filterpy and https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/kf_book/mkf_internal.py
 
+"""
+Plot functions
+"""
+
 def covariance_ellipse(P, deviations=1):
     """
     Returns a tuple defining the ellipse representing the 2 dimensional
@@ -136,6 +140,9 @@ def plot_track_ellipses(ps, cov, title):
                axis_equal=False, ec='g', alpha=0.5)
 
 
+"""
+Kalman Filter
+"""
 
 def simulate_realworld_neato(sensor_var, process_var, vel=1.0, step=1, dt=1.):
     """Simulates the movement of a Neato and measurement in the world.
@@ -160,55 +167,56 @@ def simulate_realworld_neato(sensor_var, process_var, vel=1.0, step=1, dt=1.):
         zs.append(x + np.random.randn() * sensor_std)  # noise corrupted observation
     return np.array(xs), np.array(zs)
 
-xs, zs = simulate_realworld_neato(0.2, 0.1, vel=1., step=10, dt=0.5)
-plt.plot(xs, marker=".", ms=10, label="Real Path")
-plt.plot(zs, linestyle="--", marker="*", ms=10, label="Observations")
-plt.title("Simulate Neato Position")
-plt.legend()
-plt.show()
 
 def get_Q(dt, var):
     """Returns a white noise model Q according to dt and var"""
     Q = np.array([[(0.5*var*dt**2)**2, 0.5*var*dt**2],[0.5*var*dt**2, var*dt**2]])
-    print("Q", Q.dtype, Q)
+    # print("Q", Q.dtype, Q)
     return Q
 
 def predict(x, P, F, Q):
     """Returns a prediction update for pose and pose covariance according to the process model"""
     xt = F @ x
     Pt = F @ P @ F.T + Q
-    # print("Predict functoin types:")
-    # print("xt", xt.dtype)
-    # print("Pt", Pt.dtype)
+
+    if TYPE_HINTS:
+        print("\n Predict Function types: ")
+
+        print("F", F)
+        print("Q", Q)
+        
+        print("xt", xt.dtype, xt)
+        print("Pt", Pt.dtype, Pt)
+
     return xt, Pt
 
-# # test your prediction on a quick sample case
-# dt = 1.
-# x = np.array([1., 0.5]).T
-# P = np.array([[500, 0],
-#               [0, 49]])
-# F = np.array([[1, dt],
-#               [0, 1]])
-# Q = get_Q(dt, 1.)
+def test_predict():
+    # test your prediction on a quick sample case
+    dt = 1.
+    x = np.array([1., 0.5]).T
+    P = np.array([[500, 0],
+                [0, 49]])
+    F = np.array([[1, dt],
+                [0, 1]])
+    Q = get_Q(dt, 1.)
 
-# xt_sol = np.array([1.5, 0.5]).T
-# Pt_sol = np.array([[549.25, 49.5],[49.5, 50.]])
+    xt_sol = np.array([1.5, 0.5]).T
+    Pt_sol = np.array([[549.25, 49.5],[49.5, 50.]])
 
-# x1, P1 = predict(x, P, F, Q)
-# print(x1[0] == xt_sol[0] and x1[1] == xt_sol[1])
-# print(P1[0][0] == Pt_sol[0][0] and P1[1][0] == Pt_sol[1][0] and P1[0][1] == Pt_sol[0][1] and P1[1][1] == Pt_sol[1][1])
+    x1, P1 = predict(x, P, F, Q)
+    print(x1[0] == xt_sol[0] and x1[1] == xt_sol[1])
+    print(P1[0][0] == Pt_sol[0][0] and P1[1][0] == Pt_sol[1][0] and P1[0][1] == Pt_sol[0][1] and P1[1][1] == Pt_sol[1][1])
 
 
-def update(x, P, z, H, R, counter):
+def update(x, P, z, H, R):
     """Performs an update to x, P given observation z according to measurement model H and measurement noise R"""
-    # if counter == 1:
-    #     print("x", x.dtype, x)
-    #     print("P", P.dtype, P)
-    #     print("z", z.dtype, z)
-    #     print("H", H.dtype, H)
-    #     print("R", R.dtype, R)
-
-    # counter += 1
+    if TYPE_HINTS == 1:
+        print("\nUpdate Function types: ")
+        print("x", x.dtype, x)
+        print("P", P.dtype, P)
+        print("z", z.dtype, z)
+        print("H", H.dtype, H)
+        print("R", R.dtype, R)
 
     S = H @ P @ H.T + R
     K = P @ H.T @ sp.linalg.inv(S)
@@ -218,79 +226,109 @@ def update(x, P, z, H, R, counter):
 
     return x, P
 
-# # test your update with a simple test case
-# dt = 1.
-# x = np.array([1., 0.5]).T
-# z = np.array([1.])  # the exact measurement of the real world...should reduce our uncertainty in position
-# P = np.array([[500, 0],
-#               [0, 49]])
-# F = np.array([[1, dt],
-#               [0, 1]])
-# Q = get_Q(dt, 1.)
-# H = np.array([[1., 0.]])
-# R = np.array([[10]])
+def test_update():
+    # test your update with a simple test case
+    dt = 1.
+    x = np.array([1., 0.5]).T
+    z = np.array([1.])  # the exact measurement of the real world...should reduce our uncertainty in position
+    P = np.array([[500, 0],
+                [0, 49]])
+    F = np.array([[1, dt],
+                [0, 1]])
+    Q = get_Q(dt, 1.)
+    H = np.array([[1., 0.]])
+    R = np.array([[10]])
 
-# xt_sol = np.array([1., 0.5]).T
-# Pt_sol = np.array([[9.80392157, 0.],[0, 49.]])
+    xt_sol = np.array([1., 0.5]).T
+    Pt_sol = np.array([[9.80392157, 0.],[0, 49.]])
 
-# x1, P1 = update(x, P, z, H, R)
+    x1, P1 = update(x, P, z, H, R)
 
-# print(x1[0] == xt_sol[0] and x1[1] == xt_sol[1])
-# print(P1[0][0]-Pt_sol[0][0] < 0.0001 and P1[1][0] == Pt_sol[1][0] and P1[0][1] == Pt_sol[0][1] and P1[1][1] == Pt_sol[1][1])
-
-
-# Set up our models
-steps = 50
-dt = 1
-robot_vel = 2.0
-sensor_var = 100.
-process_var = 0.1
-
-x = np.array([10., 4.5]).T  # initial guess of state
-P = np.diag([500., 49.])  # initial variance on state variables
-F = np.array([[1, dt],
-              [0, 1]])  # process model
-Q = get_Q(dt, var=0.01)#process_var)  # process noise
-H = np.array([[1., 0.]])  # measurement model
-R = np.array([[10.]])#sensor_var]])  # measurement variance
-
-true_poses, observations = simulate_realworld_neato(sensor_var, process_var, vel=robot_vel, step=steps, dt=dt)
-x_filter = []
-P_filter = []
+    print(x1[0] == xt_sol[0] and x1[1] == xt_sol[1])
+    print(P1[0][0]-Pt_sol[0][0] < 0.0001 and P1[1][0] == Pt_sol[1][0] and P1[0][1] == Pt_sol[0][1] and P1[1][1] == Pt_sol[1][1])
 
 
-# Iterate through observations
-for z in observations:
-    x_predict, P_predict = predict(x, P, F, Q)
-    x, P = update(x_predict, P_predict, z, H, R, counter=1)
-    x_filter.append(x)
-    P_filter.append(P)
+def test_sim():
+    xs, zs = simulate_realworld_neato(0.2, 0.1, vel=1., step=10, dt=0.5)
+    plt.plot(xs, marker=".", ms=10, label="Real Path")
+    plt.plot(zs, linestyle="--", marker="*", ms=10, label="Observations")
+    plt.title("Simulate Neato Position")
+    plt.legend()
+    plt.show()
+
+TESTING = False
+TYPE_HINTS = True
+SHOW_PLOTS = False
+
+def main():
+
+    global TYPE_HINTS
+
+    # Test the update and predict step
+    if TESTING:
+        test_sim()
+        test_predict()
+        test_update()
+
+    # Model Configs
+    steps = 50
+    dt = 1
+    robot_vel = 2.0
+    sensor_var = 100.
+    process_var = 0.1
+
+    x = np.array([10., 4.5]).T  # initial guess of state
+    P = np.diag([500., 49.])  # initial variance on state variables
+    F = np.array([[1, dt],
+                [0, 1]])  # process model
+    Q = get_Q(dt, var=0.01)#process_var)  # process noise
+    H = np.array([[1., 0.]])  # measurement model
+    R = np.array([[10.]])#sensor_var]])  # measurement variance
+
+    true_poses, observations = simulate_realworld_neato(sensor_var, process_var, vel=robot_vel, step=steps, dt=dt)
+    x_filter = []
+    P_filter = []
+
+    # Iterate through observations
+    for z in observations:
+        x_predict, P_predict = predict(x, P, F, Q)
+        x, P = update(x_predict, P_predict, z, H, R)
+        x_filter.append(x)
+        P_filter.append(P)
+
+        # show once
+        if TYPE_HINTS: 
+            TYPE_HINTS=False
+
+    if SHOW_PLOTS:
+        # Plot the results
+        fig = plt.figure()
+        xf, Pf = np.array(x_filter), np.array(P_filter)
+        plt.plot(true_poses, marker=".", ms=10, label="True Path")
+        plt.plot(observations, marker="*", ms=10, lw=0, label="Observations")
+        plt.plot(xf[:,0], lw=1, label="Filter Estimate")
+        plot_track_ellipses(xf[:,0], Pf, title="track")
+        plt.legend(["True Path", "Observations", "Filter Guess"])
+        plt.gcf().set_size_inches(12, 6)
+        plt.show()
+
+        # Examine the velocity estimate
+        fig = plt.figure()
+        plt.plot(np.ones_like(xf[:,1])*robot_vel, label="True Velocity")
+        plt.plot(xf[:,1], lw=5, label="Filter Estimate Velocity")
+        plt.legend()
+        plt.gcf().set_size_inches(12, 6)
+        plt.show()
+
+        # Examine the covariance over time
+        fig, ax = plt.subplots(1,2)
+        ax[0].plot(Pf[:,0,0], lw=5, label="Position Variance")
+        ax[0].set_title("Position Variance")
+        ax[1].plot(Pf[:,1,1], lw=5, label="Velocity Variance")
+        ax[1].set_title("Velocity Variance")
+        fig.set_size_inches(12, 6)
+        plt.show()
 
 
-# # Plot the results
-# fig = plt.figure()
-# xf, Pf = np.array(x_filter), np.array(P_filter)
-# plt.plot(true_poses, marker=".", ms=10, label="True Path")
-# plt.plot(observations, marker="*", ms=10, lw=0, label="Observations")
-# plt.plot(xf[:,0], lw=1, label="Filter Estimate")
-# plot_track_ellipses(xf[:,0], Pf, title="track")
-# plt.legend(["True Path", "Observations", "Filter Guess"])
-# plt.gcf().set_size_inches(12, 6)
-# plt.show()
-
-# # Examine the velocity estimate
-# fig = plt.figure()
-# plt.plot(np.ones_like(xf[:,1])*robot_vel, label="True Velocity")
-# plt.plot(xf[:,1], lw=5, label="Filter Estimate Velocity")
-# plt.legend()
-# plt.gcf().set_size_inches(12, 6)
-# plt.show()
-
-# # Examine the covariance over time
-# fig, ax = plt.subplots(1,2)
-# ax[0].plot(Pf[:,0,0], lw=5, label="Position Variance")
-# ax[0].set_title("Position Variance")
-# ax[1].plot(Pf[:,1,1], lw=5, label="Velocity Variance")
-# ax[1].set_title("Velocity Variance")
-# fig.set_size_inches(12, 6)
-# plt.show()
+if __name__=="__main__":
+    main()

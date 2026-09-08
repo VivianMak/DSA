@@ -1,9 +1,7 @@
 #pragma once
-#include <functional>
-#include <iostream>
-#include <memory>
+
 #include <Eigen/Dense>
-#include <Eigen/Sparse>
+#include <utility>
 
 namespace KF{
 
@@ -15,28 +13,34 @@ class KalmanFilter{
             const double robot_vel,
             const double sensor_var,
             const double process_var
-        )
+        );
 
+        // Sets the initial state and covariance before running predict/update.
+        void setState(const Eigen::Vector2d& x0, const Eigen::Matrix2d& P0);
+
+        // Returns a white noise model Q according to dt and var
         Eigen::Matrix2d
         get_Q(
             double dt,
             double var
-        )
+        );
 
-        std::pair<std::double, std::double>
+        std::pair<Eigen::Vector2d, Eigen::Matrix2d>
         predict(
-            const x;
-            const P;
-            const F; 
-            const Q; 
-        )
+            const Eigen::Matrix2d& F,
+            const Eigen::Matrix2d& Q
+        );
 
-        void update(double z, const Eigen::RowVector2d& H, double R);
+        void update(
+            double z, 
+            const Eigen::RowVector2d& H, 
+            double R
+        );
 
         // Accessors - avoid copying
         int steps() const { return steps_; }
         double dt() const { return dt_; }
-        const Eigen::Vector2d& robot_vel() const { return robot_vel_; }
+        double robot_vel() const { return robot_vel_; }
         const Eigen::Vector2d& state() const { return x_; }
         const Eigen::Matrix2d& covariance() const { return P_; }
 
@@ -45,8 +49,10 @@ class KalmanFilter{
         int steps_;
         double robot_vel_;
         double sensor_var_;
-        double process_var;
+        double process_var_;
+
+        Eigen::Vector2d x_ = Eigen::Vector2d::Zero();
+        Eigen::Matrix2d P_ = Eigen::Matrix2d::Identity();
 
     };
-}
-#endif // KF
+}   // namespace KF
