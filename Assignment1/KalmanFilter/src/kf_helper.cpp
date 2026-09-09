@@ -42,8 +42,8 @@ namespace KF_HELPER
             // Make a list of real and observed positions
             float v = config.robot_vel + (randn(gen) * std::sqrt(config.process_var));
             x += v * config.dt;
-            xs.push_back(x);
-            zs.push_back(x + randn(gen) * std::sqrt(config.sensor_var));
+            xs[i] = x;
+            zs[i] = x + randn(gen) * std::sqrt(config.sensor_var);
         }
             
         return {xs, zs};

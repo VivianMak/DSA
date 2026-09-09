@@ -169,6 +169,15 @@ def simulate_realworld_neato(sensor_var, process_var, vel=1.0, step=1, dt=1.):
         zs.append(x + np.random.randn() * sensor_std)  # noise corrupted observation
     return np.array(xs), np.array(zs)
 
+def test_sim():
+    xs, zs = simulate_realworld_neato(0.2, 0.1, vel=1., step=10, dt=0.5)
+    print("Size of xs", len(xs))
+    print("Size of zs", len(zs))
+    plt.plot(xs, marker=".", ms=10, label="Real Path")
+    plt.plot(zs, linestyle="--", marker="*", ms=10, label="Observations")
+    plt.title("Simulate Neato Position")
+    plt.legend()
+    plt.show()
 
 def get_Q(dt, var):
     """Returns a white noise model Q according to dt and var"""
@@ -249,16 +258,7 @@ def test_update():
     print(x1[0] == xt_sol[0] and x1[1] == xt_sol[1])
     print(P1[0][0]-Pt_sol[0][0] < 0.0001 and P1[1][0] == Pt_sol[1][0] and P1[0][1] == Pt_sol[0][1] and P1[1][1] == Pt_sol[1][1])
 
-
-def test_sim():
-    xs, zs = simulate_realworld_neato(0.2, 0.1, vel=1., step=10, dt=0.5)
-    plt.plot(xs, marker=".", ms=10, label="Real Path")
-    plt.plot(zs, linestyle="--", marker="*", ms=10, label="Observations")
-    plt.title("Simulate Neato Position")
-    plt.legend()
-    plt.show()
-
-TESTING = False
+TESTING = True
 TYPE_HINTS = True
 SHOW_PLOTS = False
 
@@ -272,7 +272,7 @@ def main():
         # test_predict()
         # test_update()
 
-    # sys.exit()
+    sys.exit()
 
     # Model Configs
     steps = 50

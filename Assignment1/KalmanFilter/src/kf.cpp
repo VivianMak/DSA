@@ -18,28 +18,23 @@ namespace KF{
         /*
         Set initial state of the kalman filter
         */
-        void KalmanFilter::setState()
+        void KalmanFilter::setState(
+            const Eigen::Vector2d& x0,
+            const Eigen::Matrix2d& P0,
+            const Eigen::RowVector2d& H,
+            std::optional<double> R
+        )
         {
+            x_ = x0;
+            P_ = P0;
 
-            // Initial guess of state
-            x_ = Eigen::Vector2d(10.0, 4.5);
-
-            // Initial variance of state var
-            P_ << 500.0, 0.0,
-                  0.0,  49.0;
-
-            // Process model
             F_ << 1.0, dt_,
-                 0.0, 1.0;
+                0.0, 1.0;
 
-            // Process noise
             Q_ = get_Q(dt_, process_var_);
 
-            // Measurement model
-            H_ << 1.0, 0.0;
-            
-            // Measurement variance
-            R_ = sensor_var_;
+            H_ = H;
+            R_ = R.value_or(sensor_var_);
         }
 
         /*
@@ -95,7 +90,7 @@ namespace KF{
         std::pair<std::vector<Eigen::Vector2d>, std::vector<Eigen::Matrix2d>>
         KalmanFilter::solve(const std::vector<double>& observations)
         {
-            std::cout << "Solving the global optimization..." << std::endl;
+            std::cout << "\nSolving the global optimization..." << std::endl;
 
             std::vector<Eigen::Vector2d> x_filter;
             std::vector<Eigen::Matrix2d> P_filter;

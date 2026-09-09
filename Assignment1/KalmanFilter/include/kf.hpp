@@ -15,7 +15,13 @@ class KalmanFilter{
         );
 
         // Sets the initial state and covariance before running predict/update.
-        void setState();
+        void setState(
+            const Eigen::Vector2d& x0 = Eigen::Vector2d(10.0, 4.5),
+            const Eigen::Matrix2d& P0 = (Eigen::Matrix2d() << 500.0, 0.0,
+                                                                0.0, 49.0).finished(),
+            const Eigen::RowVector2d& H = Eigen::RowVector2d(1.0, 0.0),
+            std::optional<double> R = std::nullopt
+        );
 
         // Returns a white noise model Q according to dt and var
         Eigen::Matrix2d

@@ -20,9 +20,10 @@ add_library(kf
     src/kf.cpp
 )
 target_include_directories(kf PUBLIC include)
-target_link_libraries(kf PUBLIC Eigen3::Eigen)
+target_link_libraries(kf PUBLIC kf_helper Eigen3::Eigen)
 
-
+enable_testing()
+add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)
