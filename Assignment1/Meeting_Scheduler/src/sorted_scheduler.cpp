@@ -23,8 +23,8 @@ namespace SortedScheduler{
         std::vector<Meeting> sorted_meetings = meetings;
         sort_start_time(sorted_meetings);
 
-        for (auto [i, m] : sorted_meetings | std::views::enumerate | std::views::drop_last(1)){
-            if (m.end_time > sorted_meetings[i].start_time){
+        for (std::size_t i = 0; i + 1 < sorted_meetings.size(); i++){
+            if (sorted_meetings[i].end_time > sorted_meetings[i+1].start_time){
                 return true;
             }
         }
@@ -43,7 +43,7 @@ int main(){
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
-        {{11, 30}, {11, 45}},
+        {{10, 30}, {11, 45}},
     };
 
     // Turn the raw times into meeting objects
