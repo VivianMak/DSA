@@ -18,8 +18,8 @@ add_executable(simple_scheduler
 target_include_directories(simple_scheduler PUBLIC include)
 
 
-# # Main program executable
-# add_executable(sorted_scheduler src/sorted_scheduler.cpp)
-# target_link_libraries(sorted_scheduler
-#     sorted_scheduler
-# )
+# Main program executable
+add_executable(sorted_scheduler 
+    src/sorted_scheduler.cpp
+)
+target_include_directories(sorted_scheduler PUBLIC include)
