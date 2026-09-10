@@ -1,19 +1,3 @@
-# cmake_minimum_required(VERSION 3.10)
-# project(KalmanFilter LANGUAGES CXX)
-
-# set(CMAKE_CXX_STANDARD 17)
-
-# find_package(Eigen3 3.3 REQUIRED NO_MODULE)   # or omit — see note below
-
-# # Library: test_kf
-# add_library(test_kf
-#     test_kf.cpp
-# )
-
-# target_include_directories(test_kf PUBLIC include)
-# target_link_libraries(test_kf Eigen3::Eigen)
-# add_executable(tests test_kf.cpp)
-
 include(FetchContent)
 FetchContent_Declare(
     googletest
