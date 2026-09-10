@@ -19,4 +19,5 @@ extract_time(const SimpleScheduler::Meeting& m);
 
 bool find_conflict(const std::vector<SimpleScheduler::Meeting>& meetings);
 
+std::vector<Meeting> time_to_meetings(const std::vector<std::pair<HM, HM>>& raw_times);
 }

@@ -13,21 +13,7 @@ int main(){
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SimpleScheduler::Meeting> meeting_list;
-    
-    for (auto [i, times] : raw_times | std::views::enumerate) {
-        // Data strucutre: 
-        // meeting_list = [[start_time, end_time], [start_time, end_time], ...]
-        
-        auto[start_hm, end_hm] = times;
-
-        std::chrono::minutes start_time = std::chrono::hours(std::get<0>(start_hm)) + std::chrono::minutes(std::get<1>(start_hm));
-        std::chrono::minutes end_time = std::chrono::hours(std::get<0>(end_hm)) + std::chrono::minutes(std::get<1>(end_hm));
-
-        meeting_list.push_back(SimpleScheduler::Meeting{
-            static_cast<int>(i), start_time, end_time
-        });
-    }
+    std::vector<SimpleScheduler::Meeting> meeting_list = SimpleScheduler::time_to_meetings(raw_times);
 
     bool conflict = SimpleScheduler::find_conflict(meeting_list);
 
