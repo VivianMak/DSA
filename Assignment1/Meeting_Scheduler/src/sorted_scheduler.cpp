@@ -31,49 +31,23 @@ namespace SortedScheduler{
         return false;
     }
 
-} // namespace SortedScheduler
+    std::vector<Meeting> time_to_meetings(const std::vector<std::pair<HM, HM>>& raw_times){
+        std::vector<Meeting> meeting_list;
 
+        for (auto [i, times] : raw_times | std::views::enumerate) {
+            auto [start_hm, end_hm] = times;
 
-using SortedScheduler::find_conflict;
+            std::chrono::minutes start_time =
+                std::chrono::hours(std::get<0>(start_hm)) + std::chrono::minutes(std::get<1>(start_hm));
+            std::chrono::minutes end_time =
+                std::chrono::hours(std::get<0>(end_hm)) + std::chrono::minutes(std::get<1>(end_hm));
 
-int main(){
+            meeting_list.push_back(Meeting{
+                static_cast<int>(i), start_time, end_time
+            });
+        }
 
-    // Create meeting times
-    std::vector<std::pair<SortedScheduler::HM, SortedScheduler::HM>>
-    raw_times = {
-        {{10, 0},  {11, 0}},
-        {{13, 0}, {14, 0}},
-        {{10, 30}, {11, 45}},
-    };
-
-    // Turn the raw times into meeting objects
-    std::vector<SortedScheduler::Meeting> meeting_list;
-    
-    for (auto [i, times] : raw_times | std::views::enumerate) {
-        // Data strucutre: 
-        // meeting_list = [[start_time, end_time], [start_time, end_time], ...]
-        
-        auto[start_hm, end_hm] = times;
-
-        std::chrono::minutes start_time = std::chrono::hours(std::get<0>(start_hm)) + std::chrono::minutes(std::get<1>(start_hm));
-        std::chrono::minutes end_time = std::chrono::hours(std::get<0>(end_hm)) + std::chrono::minutes(std::get<1>(end_hm));
-
-        meeting_list.push_back(SortedScheduler::Meeting{
-            static_cast<int>(i), start_time, end_time
-        });
+        return meeting_list;
     }
 
-    bool conflict = SortedScheduler::find_conflict(meeting_list);
-
-    std::string c;
-    if (conflict==1){
-        c = "True";
-    }else{
-        c = "False";
-    };
-
-
-    std::cout << "Are there conflicts? " << c  << std::endl;
-
-    return 0;
-}
+} // namespace SortedScheduler

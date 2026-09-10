@@ -4,22 +4,31 @@ project(Meeting_Scheduler LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-
 ##### Build Libraries #####
 
-# enable_testing()
-# add_subdirectory(tests)
-
-# Main program executable
-add_executable(simple_scheduler
+add_library(simple_scheduler_lib
     src/simple_scheduler.cpp
 )
-target_include_directories(simple_scheduler PUBLIC include)
+target_include_directories(simple_scheduler_lib PUBLIC include)
 
-
-# Main program executable
-add_executable(sorted_scheduler 
+add_library(sorted_scheduler_lib
     src/sorted_scheduler.cpp
 )
-target_include_directories(sorted_scheduler PUBLIC include)
+target_include_directories(sorted_scheduler_lib PUBLIC include)
+
+##### Build Executables #####
+
+add_executable(simple_scheduler
+    src/simple_main.cpp
+)
+target_link_libraries(simple_scheduler PRIVATE simple_scheduler_lib)
+
+add_executable(sorted_scheduler
+    src/sorted_main.cpp
+)
+target_link_libraries(sorted_scheduler PRIVATE sorted_scheduler_lib)
+
+##### Testing #####
+
+enable_testing()
+add_subdirectory(tests)
