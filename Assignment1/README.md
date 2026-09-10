@@ -55,6 +55,8 @@ The kalman filter, often applied in robotics, aims to fuse the physical world wi
 
 Because we can keep track of the time and assume a constant-velocity model, we can derive the position of the next timestep with _Position = Velocity * Time_.
 
+The python version of the code is included in [`KalmanFilter/kf.py`](KalmanFilter/kf.py).
+
 
 **Process of Translating to C++**
 
@@ -68,10 +70,18 @@ One thing I would like to get feedback on is the code architecture and how I wou
 
 ## Implementing Meeting Scheduler
 
-Implement an algorithm that determines whether a collection of meetings contains a conflict (as we discussed in the [day 1](../in_class/day01) page).
+> Implement an algorithm that determines whether a collection of meetings contains a conflict (as we discussed in the [day 1](../in_class/day01) page): 1) checks pairs of meetings, 2) sorts meetings, and 3) write unit tests
 
-It's up to you how you pass data into your program.  You could read it from a file, hard code a test input into your main function, etc.
+**Check Pairs of Meetings**
 
-* First implement the straightforward algorithm that checks pairs of meetings.
-* Develop a second algorithm that sorts the meetings in a useful way so you can check for conflicts more easily.  You should not implement your own search function, but instead use your language's built-in sort function.
-* Write unit tests for both implementations, including edge cases such as one meeting ending exactly when another starts. For each algorithm (the straightforward one and the one based sorting), describe how you expect its running time to grow with $n$.  As mentioned on day 1, sorting has runtime $\Theta(n \log n)$.
+The run time would be $\Theta(n ^ 2)$ since there is a nested for loop that compares every pair of meetings for a conflict.
+
+**Sorts Meetings**
+
+The run time would be $\Theta(n \log n)$ because it sorts the meetings first before passing over the list once.
+
+**Unit Tests**
+
+1. No conflicts
+2. Conflicts
+3. No conflicts, meetings end right after another
