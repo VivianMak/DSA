@@ -130,3 +130,7 @@ bool isValid(std::string& s){
 > Solve the copy stack problem (source: University of Washington CSE122).
 > Given a stack return a copy of the original stack (i.e., a new stack with the same values as the original, stored in the same order as the original). Your method should create the new stack and fill it up with the same values that are stored in the original stack.
 > You may use one queue as auxiliary storage.
+
+1. Original stack 1, 2, 3
+2. Pop and Enqueue from back to front 3, 2, 1
+3. Dequeue and push from front to back to stack 3, 2, 1
