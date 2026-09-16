@@ -30,9 +30,9 @@ namespace DoublyLinkedList{
                     head_->prev = node;
                 } else {
                     tail_ = node; // list was empty, new node is also the tail
+                }
                 head_ = node;
                 len_++;
-                }
             }
             
             // Add element to back of list
