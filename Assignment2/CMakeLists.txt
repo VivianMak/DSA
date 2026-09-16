@@ -14,12 +14,17 @@ target_include_directories(DoublyLinkedList_lib INTERFACE include)
 add_library(structs_lib INTERFACE)
 target_include_directories(structs_lib INTERFACE include)
 
+# Valid parenthesis
+add_library(valid_lib INTERFACE)
+target_include_directories(valid_lib INTERFACE include)
+
 # enable_testing()
 # add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE
-    DoublyLinkedList_lib
-    structs_lib
+    # DoublyLinkedList_lib
+    # structs_lib
+    valid_lib
 )
