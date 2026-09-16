@@ -1,6 +1,7 @@
 #pragma once
 
-#include <stdexcept>
+#include "DoublyLinkedList.hpp"
+#include <optional>
 
 // Notes
 // - "->": dereference a pointer, then access a member / (*ptr).member
@@ -8,72 +9,71 @@
 
 namespace Structs{
 
+    // Last in first out
     template <typename T>
     class Stack{
         private:
-            struct sNode {
-                T data;
-                sNode* next;
-                sNode(T val, sNode* nxt): data(val), net(nxt) {}
-            }
-
-            sNode* top;
-            size_t len;
+            DoublyLinkedList<T> list_;
 
         public:
+            //  Add [data] to the top (last) of the stack
+            void push(T data){
+                list_.pushBack(data);
+            }
 
-            Stack() : top(nullptr), len(0) {}
+            // Remove element at top (last) of queue
+            // @return value at tail or null
+            std::optional<T> pop(){
+                return list.popBack();
+            }
 
+            // @return value at tail or null
+            std::optional<T> pop(){
+                return list.peekBack();
+            }
 
-            StackNode(T data, T* ptr &next);
+            // Check if list is empty
+            bool isEmpty(){
+                return list_.isEmpty();
+            }
 
-            // Check if stack is empty
-            bool isEmpty() const {
-                // top points to null when stack is empty
-                if (top == nullptr){
-                    return true;
-                }
-                return false;
-            };
-
-            // Returns top (last) element w/o removing
-            T peek() const {
-                if (isEmpty()){
-                    throw std::out_of_range("Stack is empty");
-                }
-                return top->data
-            };
-
-            // Add to top (last) of list
-            void push(T new_data) {
-                // new node should point to previous top of data
-                sNode* new_node = new sNode(new_data, top);
-                top = new_node;
-                len++;
-            };
-
-            // Removes the top element, reassigns top pointer
-            T pop() {
-                if (isEmpty()){
-                    throw std::out_of_range("Stack is empty");
-                }
-                sNode* old_top = top;
-                T value = old_top->data;
-                top = old_top->next; // move the top pointer to next node
-                delete old_top;
-                len--;
-                return value;
-            };
+            size_t getSize() const{
+                return list_.getSize();
+            }
     }
 
     template <typename T>
     class Queue {
         private:
-            struct qNode{
-                T data;
-                sNode* next;
-                sNode(T val, sNode* nxt): data(val), net(nxt) {}
+            DoublyLinkedList<T> list_;
+
+        public:
+
+            // Add [data] to end of queue
+            void enqueue(T data){
+                list_.pushBack(data);
             }
+
+            // Remove element at front of queue
+            // @return value at head or null
+            T dequeue(){
+                return list_.popFront();
+            }
+            
+            // @return value at head or null
+            T peek(){
+                return list_.peekFront();
+            }
+
+            // Check if list is empty
+            bool isEmpty(){
+                return list_.isEmpty();
+            }
+            
+            size_t getSize() const{
+                return list_.getSize();
+            }
+
     }
     
 
