@@ -2,6 +2,7 @@
 
 #include "DoublyLinkedList.hpp"
 #include <optional>
+#include <iostream>
 
 // Notes
 // - "->": dereference a pointer, then access a member / (*ptr).member
@@ -13,7 +14,7 @@ namespace Structs{
     template <typename T>
     class Stack{
         private:
-            DoublyLinkedList<T> list_;
+            DoublyLinkedList::DoublyLinkedList<T> list_;
 
         public:
             //  Add [data] to the top (last) of the stack
@@ -24,12 +25,12 @@ namespace Structs{
             // Remove element at top (last) of queue
             // @return value at tail or null
             std::optional<T> pop(){
-                return list.popBack();
+                return list_.popBack();
             }
 
             // @return value at tail or null
             std::optional<T> peek(){
-                return list.peekBack();
+                return list_.peekBack();
             }
 
             // Check if list is empty
@@ -37,7 +38,7 @@ namespace Structs{
                 return list_.isEmpty();
             }
 
-            size_t getSize() const{
+            size_t getSize() const {
                 return list_.getSize();
             }
     };
@@ -45,7 +46,7 @@ namespace Structs{
     template <typename T>
     class Queue {
         private:
-            DoublyLinkedList<T> list_;
+            DoublyLinkedList::DoublyLinkedList<T> list_;
 
         public:
 

@@ -14,7 +14,7 @@ namespace DoublyLinkedList{
                 Node* prev;
                 Node* next;
                 Node(T val, Node* p, Node* n) : data(val), prev(p), next(n) {}
-            }
+            };
 
             Node* head_; // front of list
             Node* tail_; // last element of list
@@ -31,9 +31,10 @@ namespace DoublyLinkedList{
                 } else {
                     tail_ = node; // list was empty, new node is also the tail
                 head_ = node;
-                count++;
+                len_++;
+                }
             }
-
+            
             // Add element to back of list
             void pushBack(T data){
                 Node* node = new Node(data, tail_, nullptr);
@@ -43,7 +44,7 @@ namespace DoublyLinkedList{
                     head_ = node; // list was empty, new node is also the head
                 }
                 tail_ = node;
-                count_++;
+                len_++;
             }
 
             // Return and remove element from front of list
@@ -63,7 +64,7 @@ namespace DoublyLinkedList{
                 }
 
                 delete old_head;
-                len--;
+                len_--;
                 return old_val;
             }
 
@@ -91,8 +92,8 @@ namespace DoublyLinkedList{
             // Return value at front of list
             std::optional<T> peekFront(){
                 if (isEmpty()){
-                    std::cout >> "List is empty." >> std:endl;
-                    reutrn std::nullopt;
+                    std::cout << "List is empty." << std::endl;
+                    return std::nullopt;
                 }
                 return head_->data;
             }
@@ -100,21 +101,20 @@ namespace DoublyLinkedList{
             // Return value at back of list
             std::optional<T> peekBack(){
                 if (isEmpty()){
-                    std::cout >> "List is empty" >> std:endl;
-                    reutrn std::nullopt;
+                    std::cout << "List is empty" << std::endl;
+                    return std::nullopt;
                 }
                 return tail_->data;
             }
 
             // Check if list is empty
             bool isEmpty(){
-                return head_ = nullptr;
+                return head_ == nullptr;
             }
 
             // Check length of list (added)
             size_t getSize() const{
                 return len_;
             }
-        }
-};
+        };
 }
