@@ -71,7 +71,7 @@ public:
 
 ## Practice Problems with Stacks and Queues - Strategies
 
-## Exercise 3 (Implemented)
+## Exercise 3
 > How would you reverse the elements in a stack (i.e., put the elements at the top of the stack on the bottom and vice versa)? You can use as many additional stacks and queues as temporary storage in your approach.
 
 1. Make an empty list of size = getSize()?
@@ -91,7 +91,38 @@ public:
 Implementation: [`main.cpp`](src/main.cpp)
 
 ```cpp
+// isValid function
 
+bool isValid(std::string& s){
+
+    // 1. Create a mapping of parenthesis
+    static const std::unordered_map<char, char> map = {')', '('}, {']', '['}, {'}', '{'}
+
+    // 2. Create an emppty stack
+    Structs::Stack<char> stack;
+
+    // 3. Loop through string
+    for (char c : s) {
+
+        // 4. If it's an opening parenthesis, push to stack
+        if (c == '(' || c == '{' || c == '[') {
+            stack.push(c);
+        } else {
+
+            // 5. If it's a closing parenthesis, pop the stack 
+            std::optional<char> top = stack.pop();
+
+            // 6. Check if top val is a pair with char
+            if (!top || *top != map.at(c)) {
+                return false;
+            }
+        }
+    }
+
+    // 7. Return true when all parenthesis is paired up
+    return stack.isEmpty();
+
+}
 
 ```
 

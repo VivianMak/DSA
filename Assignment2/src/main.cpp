@@ -37,10 +37,10 @@ bool isValid(std::string& s){
 
 int main()
 {   
-    std::string str = "()";
+    std::string str = "([])";
     bool valid = isValid(str);
 
-    std::cout << str << ": " << valid << std::endl;
+    std::cout << str << ": " << (valid ? "true" : "false") << std::endl;
 
     return 0;
 }
