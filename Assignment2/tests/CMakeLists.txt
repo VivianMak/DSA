@@ -7,14 +7,29 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(unit_tests
-    # add your test .cpp files here, e.g.: test_mymodule.cpp
+include(GoogleTest)
+
+# Testing Structs
+add_executable(test_structs
+    test_structs.cpp
 )
 
-target_link_libraries(unit_tests PRIVATE
-    # link the libraries under test here, e.g.: mymodule
+target_link_libraries(test_structs PRIVATE
+    DoublyLinkedList_lib
+    structs_lib
     GTest::gtest_main
 )
 
-include(GoogleTest)
-gtest_discover_tests(unit_tests)
+gtest_discover_tests(test_structs)
+
+# Testing Parentheses
+add_executable(test_parentheses
+    test_parentheses.cpp
+)
+
+target_link_libraries(test_parentheses PRIVATE
+    valid_lib
+    GTest::gtest_main
+)
+
+gtest_discover_tests(test_parentheses)

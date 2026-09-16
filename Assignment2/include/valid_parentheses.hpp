@@ -4,7 +4,6 @@
 
 #include "structs.hpp"
 
-// No need to reuse func, declare once
 bool isValid(std::string& s){
 
     // static - reuses the built map
