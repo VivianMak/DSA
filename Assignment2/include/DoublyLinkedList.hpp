@@ -1,6 +1,8 @@
 #pragma once
 
-#include <stdexcept>
+#include <iostream>
+#include <optional>
+
 
 namespace DoublyLinkedList{
 
@@ -45,37 +47,61 @@ namespace DoublyLinkedList{
             }
 
             // Return and remove element from front of list
-            void popFront(){
-                T old_val = peekFront();
+            std::optional<T> popFront(){
+                if (isEmpty()) {
+                    return std::nullopt;
+                }
+
                 Node* old_head = head_;
+                T old_val = old_head->data;
+
                 head_ = old_head->next;
+                if (head_) {
+                    head_->prev = nullptr;
+                } else {
+                    tail_ = nullptr; // list is now empty
+                }
+
                 delete old_head;
                 len--;
                 return old_val;
             }
 
             // Return and remove element from back of list
-            void popBack(){
-                T old_val = peekBack();
+            std::optional<T> popBack(){
+                if (isEmpty()) {
+                    return std::nullopt;
+                }
+
                 Node* old_tail = tail_;
-                tail_ = old_tail->next;
+                T value = old_tail->data;
+
+                tail_ = old_tail->prev;
+                if (tail_) {
+                    tail_->next = nullptr;
+                } else {
+                    head_ = nullptr; // list is now empty
+                }
+
                 delete old_tail;
-                len--;
-                return old_val;
+                len_--;
+                return value;
             }
 
             // Return value at front of list
-            T peekFront(){
+            std::optional<T> peekFront(){
                 if (isEmpty()){
-                    throw std::out_of_range("Stack is empty");
+                    std::cout >> "List is empty." >> std:endl;
+                    reutrn std::nullopt;
                 }
                 return head_->data;
             }
 
             // Return value at back of list
-            T peekBack(){
+            std::optional<T> peekBack(){
                 if (isEmpty()){
-                    throw std::out_of_range("Stack is empty");
+                    std::cout >> "List is empty" >> std:endl;
+                    reutrn std::nullopt;
                 }
                 return tail_->data;
             }
@@ -90,5 +116,5 @@ namespace DoublyLinkedList{
                 return len_;
             }
         }
-}
+};
 }

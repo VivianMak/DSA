@@ -28,7 +28,7 @@ namespace Structs{
             }
 
             // @return value at tail or null
-            std::optional<T> pop(){
+            std::optional<T> peek(){
                 return list.peekBack();
             }
 
@@ -40,7 +40,7 @@ namespace Structs{
             size_t getSize() const{
                 return list_.getSize();
             }
-    }
+    };
 
     template <typename T>
     class Queue {
@@ -56,12 +56,12 @@ namespace Structs{
 
             // Remove element at front of queue
             // @return value at head or null
-            T dequeue(){
+            std::optional<T> dequeue(){
                 return list_.popFront();
             }
             
             // @return value at head or null
-            T peek(){
+            std::optional<T> peek(){
                 return list_.peekFront();
             }
 
@@ -69,12 +69,10 @@ namespace Structs{
             bool isEmpty(){
                 return list_.isEmpty();
             }
-            
+
             size_t getSize() const{
                 return list_.getSize();
             }
 
-    }
-    
-
+    };
 }
