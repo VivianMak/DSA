@@ -1,15 +1,14 @@
 #include <gtest/gtest.h>
 #include <cmath>
  
-#include "simple_scheduler.hpp"
-#include "sorted_scheduler.hpp"
+#include "scheduler.hpp"
 
 // Sorted Scheduler
 
 TEST(SortedDetectConflict, NoConflictCase)
 {
     // Create meeting times
-    std::vector<std::pair<SimpleScheduler::HM, SimpleScheduler::HM>>
+    std::vector<std::pair<Scheduler::HM, Scheduler::HM>>
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
@@ -17,10 +16,10 @@ TEST(SortedDetectConflict, NoConflictCase)
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SortedScheduler::Meeting> meeting_list = SortedScheduler::time_to_meetings(raw_times);
+    std::vector<Scheduler::Meeting> meeting_list = Scheduler::time_to_meetings(raw_times);
 
     // Check for conflicts
-    bool conflict = SortedScheduler::find_conflict(meeting_list);
+    bool conflict = Scheduler::find_conflict_sorted(meeting_list);
 
     EXPECT_EQ(conflict, false);
 }
@@ -28,7 +27,7 @@ TEST(SortedDetectConflict, NoConflictCase)
 TEST(SortedDetectConflict, YesConflictCase)
 {
     // Create meeting times
-    std::vector<std::pair<SimpleScheduler::HM, SimpleScheduler::HM>>
+    std::vector<std::pair<Scheduler::HM, Scheduler::HM>>
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
@@ -36,10 +35,10 @@ TEST(SortedDetectConflict, YesConflictCase)
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SortedScheduler::Meeting> meeting_list = SortedScheduler::time_to_meetings(raw_times);
+    std::vector<Scheduler::Meeting> meeting_list = Scheduler::time_to_meetings(raw_times);
 
     // Check for conflicts
-    bool conflict = SortedScheduler::find_conflict(meeting_list);
+    bool conflict = Scheduler::find_conflict_sorted(meeting_list);
 
     EXPECT_EQ(conflict, true);
 }
@@ -47,7 +46,7 @@ TEST(SortedDetectConflict, YesConflictCase)
 TEST(SortedDetectConflict, NoConflictCaseImmediate)
 {
     // Create meeting times
-    std::vector<std::pair<SimpleScheduler::HM, SimpleScheduler::HM>>
+    std::vector<std::pair<Scheduler::HM, Scheduler::HM>>
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
@@ -55,10 +54,10 @@ TEST(SortedDetectConflict, NoConflictCaseImmediate)
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SortedScheduler::Meeting> meeting_list = SortedScheduler::time_to_meetings(raw_times);
+    std::vector<Scheduler::Meeting> meeting_list = Scheduler::time_to_meetings(raw_times);
 
     // Check for conflicts
-    bool conflict = SortedScheduler::find_conflict(meeting_list);
+    bool conflict = Scheduler::find_conflict_sorted(meeting_list);
 
     EXPECT_EQ(conflict, false);
 }
@@ -68,7 +67,7 @@ TEST(SortedDetectConflict, NoConflictCaseImmediate)
 TEST(SimpleDetectConflict, NoConflictCase)
 {
     // Create meeting times
-    std::vector<std::pair<SimpleScheduler::HM, SimpleScheduler::HM>>
+    std::vector<std::pair<Scheduler::HM, Scheduler::HM>>
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
@@ -76,10 +75,10 @@ TEST(SimpleDetectConflict, NoConflictCase)
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SimpleScheduler::Meeting> meeting_list = SimpleScheduler::time_to_meetings(raw_times);
+    std::vector<Scheduler::Meeting> meeting_list = Scheduler::time_to_meetings(raw_times);
 
     // Check for conflicts
-    bool conflict = SimpleScheduler::find_conflict(meeting_list);
+    bool conflict = Scheduler::find_conflict_simple(meeting_list);
 
     EXPECT_EQ(conflict, false);
 }
@@ -87,7 +86,7 @@ TEST(SimpleDetectConflict, NoConflictCase)
 TEST(SimpleDetectConflict, YesConflictCase)
 {
     // Create meeting times
-    std::vector<std::pair<SimpleScheduler::HM, SimpleScheduler::HM>>
+    std::vector<std::pair<Scheduler::HM, Scheduler::HM>>
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
@@ -95,10 +94,10 @@ TEST(SimpleDetectConflict, YesConflictCase)
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SimpleScheduler::Meeting> meeting_list = SimpleScheduler::time_to_meetings(raw_times);
+    std::vector<Scheduler::Meeting> meeting_list = Scheduler::time_to_meetings(raw_times);
 
     // Check for conflicts
-    bool conflict = SimpleScheduler::find_conflict(meeting_list);
+    bool conflict = Scheduler::find_conflict_simple(meeting_list);
 
     EXPECT_EQ(conflict, true);
 }
@@ -106,7 +105,7 @@ TEST(SimpleDetectConflict, YesConflictCase)
 TEST(SimpleDetectConflict, NoConflictCaseImmediate)
 {
     // Create meeting times
-    std::vector<std::pair<SimpleScheduler::HM, SimpleScheduler::HM>>
+    std::vector<std::pair<Scheduler::HM, Scheduler::HM>>
     raw_times = {
         {{10, 0},  {11, 0}},
         {{13, 0}, {14, 0}},
@@ -114,10 +113,10 @@ TEST(SimpleDetectConflict, NoConflictCaseImmediate)
     };
 
     // Turn the raw times into meeting objects
-    std::vector<SimpleScheduler::Meeting> meeting_list = SimpleScheduler::time_to_meetings(raw_times);
+    std::vector<Scheduler::Meeting> meeting_list = Scheduler::time_to_meetings(raw_times);
 
     // Check for conflicts
-    bool conflict = SimpleScheduler::find_conflict(meeting_list);
+    bool conflict = Scheduler::find_conflict_simple(meeting_list);
 
     EXPECT_EQ(conflict, false);
 }

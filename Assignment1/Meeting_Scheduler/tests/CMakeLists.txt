@@ -12,8 +12,7 @@ add_executable(test_scheduler
 )
 
 target_link_libraries(test_scheduler PRIVATE
-    simple_scheduler_lib
-    sorted_scheduler_lib
+    scheduler_lib
     GTest::gtest_main
 )
 
