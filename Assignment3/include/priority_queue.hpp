@@ -1,5 +1,6 @@
 #pragma once
 #include "min_heap.hpp"
+#include <optional>
 
 namespace PriorityQueue{
 /**
@@ -35,7 +36,7 @@ namespace PriorityQueue{
             * Get the next (highest priority) element and remove this element from the queue.
             * @return the next element in terms of priority.  If empty, return null.
             */
-           T next(){
+           std::optional<T> next(){
                 if (queue.empty()){
                     return std::nullopt;
                 }
