@@ -42,23 +42,26 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 ##### Build Libraries #####
 
-# Add one add_library() block per module, e.g.:
-# add_library(mymodule
-#     src/mymodule.cpp
-# )
-# target_include_directories(mymodule PUBLIC include)
+# MyModule
+add_library(mymodule_lib
+    src/mymodule.cpp
+)
+target_include_directories(mymodule PUBLIC include)
 # target_link_libraries(mymodule PUBLIC Eigen3::Eigen)
+
+
+add_library(mymodule INTERFACE)
+target_include_directories(mymodule INTERFACE include)
 
 enable_testing()
 add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)
-target_link_libraries(main
+target_link_libraries(main PRIVATE
     # link your libraries here, e.g.: mymodule
 )
 EOF
@@ -76,6 +79,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+include(GoogleTest)
+
+# Test 1
 add_executable(unit_tests
     # add your test .cpp files here, e.g.: test_mymodule.cpp
 )
@@ -85,7 +91,6 @@ target_link_libraries(unit_tests PRIVATE
     GTest::gtest_main
 )
 
-include(GoogleTest)
 gtest_discover_tests(unit_tests)
 EOF
 
