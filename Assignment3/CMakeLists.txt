@@ -19,3 +19,6 @@ add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE
     graph_lib
 )
+# Euler problem
+add_executable(euler81 src/euler81.cpp)
+target_link_libraries(euler81 PRIVATE graph_lib)
