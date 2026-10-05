@@ -1,6 +1,11 @@
 #pragma once
+
 #include "graph.hpp"
+#include "priority_queue.hpp"
+
 #include <unordered_map>
+#include <limits>
+#include <vector>
 
 
 // header only since we are using template types
@@ -21,15 +26,70 @@ struct DijkstraResult {
 };
 
 
-/*
-Keep track of the algorithm compute as a struct
-
-@param graph: 
-@param source:
+/* 
+* Dijkstra's algorithm
+* 
+* @param graph: adjacency graph to search thorugh
+* @param source: the beginning vertex to start from
+* 
+* @return DijkstraResult which contains a set of distances and predecessors
 */
-
 template <typename T, typename Cost>
 DijkstraResult<T, Cost> dijkstra(const DirectedGraph<T, Cost>& graph, const T& source) {
+
+    DijkstraResult<T, Cost> result;
+
+    // Check if source exists
+    if(graph.getVerticies().count(source) == 0){
+        return result;
+    }
+
+    // Set all verticies at inf distance
+    for (const T& v : graph.getVerticies()) {
+        result.dist[v] = std::numeric_limits<int>::max();
+    }
+
+    // Set source vertex to 0 -- initializes to 0 dependant on the type
+    result.dist[source] = Cost{};
+
+    // Initialize priority queue 
+    PriorityQueue::MinPriorityQueue<T, Cost> queue;
+    queue.addWithPriority(source, Cost{});
+
+    while (!queue.isEmpty()){
+        // Deference the value to next (because we check empty already, deferencing is safe; could do .next().value() to throw error)
+        T vertex = *pq.next();
+    
+
+        // Find all neighbors of current vertex
+        for (const auto& [neighbor, weight]: graph.getEdges(vertex)){
+
+            // Calc cost of neighbors through vertex
+            Cost c = result.dist[vertex] + weight;
+
+            // Check if its better than prev route or inf
+            if (c < result.dist[neighbor]){
+                result.dist[neighbor] = c;         // save new shortest distance
+                result.prev[neighbor] = vertex;    // save predecescor
+            }
+
+            // Adjust its priority queue or add
+            if (queue.contains(v)) queue.adjustPriority(neighbor, c);
+            else queue.addWithPriority(neighbor, c);
+        }
+    }
+} // end dijkstra
+
+/*
+* Rebuild the shortest path from the source to [target] using the prev map.
+*
+* @param result: the processed graph
+* @param target: the end node
+*
+* @return the vertices from source to target in order, or an empty vector
+*/
+template <typename T, typename Cost>
+std::vector<T> reconstructPath(const DijkstraResult<T, Cost>& result, const T& target) {
 
 }
 
