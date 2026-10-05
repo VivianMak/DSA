@@ -27,7 +27,7 @@ add_executable(test_heap
 )
 
 target_link_libraries(test_heap PRIVATE
-    heap_lib
+    graph_lib
     GTest::gtest_main
 )
 
