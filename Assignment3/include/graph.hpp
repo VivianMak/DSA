@@ -20,7 +20,7 @@ class DirectedGraph{
         /*
         * @return all vertices in the graph (a const reference)
         */
-        const std::unordered_set<T>& getVerticies(){
+        const std::unordered_set<T>& getVerticies() const{
             return verticies;
         }
         
@@ -48,7 +48,12 @@ class DirectedGraph{
                 return {};
             }
 
-            return adjacency.find(from)->second;
+            // Check if its an end vertex
+            auto it = adjacency.find(from);
+            if (it == adjacency.end()) {
+                return {};   // vertex exists but has no outgoing edges
+            }
+            return it->second;
         }
 
         /*

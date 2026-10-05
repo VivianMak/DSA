@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <limits>
 #include <vector>
+#include <algorithm>
 
 
 // header only since we are using template types
@@ -58,7 +59,7 @@ DijkstraResult<T, Cost> dijkstra(const DirectedGraph<T, Cost>& graph, const T& s
 
     while (!queue.isEmpty()){
         // Deference the value to next (because we check empty already, deferencing is safe; could do .next().value() to throw error)
-        T vertex = *pq.next();
+        T vertex = *queue.next();
     
 
         // Find all neighbors of current vertex
@@ -74,10 +75,16 @@ DijkstraResult<T, Cost> dijkstra(const DirectedGraph<T, Cost>& graph, const T& s
             }
 
             // Adjust its priority queue or add
-            if (queue.contains(v)) queue.adjustPriority(neighbor, c);
-            else queue.addWithPriority(neighbor, c);
+            if (!queue.addWithPriority(neighbor, c)) {
+                queue.adjustPriority(neighbor, c);
+            } else {
+                queue.addWithPriority(neighbor, c);
+            }
         }
     }
+    
+    return result;
+
 } // end dijkstra
 
 /*
@@ -90,6 +97,30 @@ DijkstraResult<T, Cost> dijkstra(const DirectedGraph<T, Cost>& graph, const T& s
 */
 template <typename T, typename Cost>
 std::vector<T> reconstructPath(const DijkstraResult<T, Cost>& result, const T& target) {
+
+    std::vector<T> path;
+
+    // Check if target is a reachable path
+    if (result.dist.find(target) == result.dist.end() || 
+        result.dist.find(target)->second == std::numeric_limits<int>::max()){
+            return path;
+        }
+
+    // Retrace steps
+    T curr_vertex = target;
+    path.push_back(curr_vertex);
+
+    auto p = result.prev.find(curr_vertex);
+    while (p != result.prev.end()) {
+        curr_vertex = p->second;
+        path.push_back(curr_vertex);
+        p = result.prev.find(curr_vertex);
+    }
+
+
+    // Unflip the target to source path
+    std::reverse(path.begin(), path.end());
+    return path;
 
 }
 

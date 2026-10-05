@@ -14,7 +14,7 @@ namespace PriorityQueue{
     class MinPriorityQueue{
 
         private:
-            MinHeap::MinHeap<T, Priority> queue;
+            MinHeap::MinHeap<T> queue;
 
         public:
 
@@ -22,13 +22,13 @@ namespace PriorityQueue{
             * @return true if the queue is empty, false otherwise
             */
             bool isEmpty(){
-                return queue.empty();
+                return queue.isEmpty();
             }   
             
             /*
             * Add [elem] with at level [priority]
             */
-            void addWithPriority(T elem, Priority priority){
+            bool addWithPriority(T elem, Priority priority){
                 return queue.insert(elem, priority);
             }
 
@@ -37,7 +37,7 @@ namespace PriorityQueue{
             * @return the next element in terms of priority.  If empty, return null.
             */
            std::optional<T> next(){
-                if (queue.empty()){
+                if (queue.isEmpty()){
                     return std::nullopt;
                 }
                 return queue.getMin();
@@ -49,7 +49,7 @@ namespace PriorityQueue{
            * the lower the priority the earlier the element in the order
            */
            void adjustPriority(T elem, Priority new_priority){
-                return queue.adjustHeapNumber(elem, newPriority);
+                queue.adjustHeapNumber(elem, new_priority);
            }
 
     };
