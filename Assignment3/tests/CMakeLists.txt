@@ -7,14 +7,28 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(unit_tests
-    # add your test .cpp files here, e.g.: test_mymodule.cpp
+include(GoogleTest)
+
+# Testing Graphs
+add_executable(test_graph
+    test_graph.cpp
 )
 
-target_link_libraries(unit_tests PRIVATE
-    # link the libraries under test here, e.g.: mymodule
+target_link_libraries(test_graph PRIVATE
+    graph_lib
     GTest::gtest_main
 )
 
-include(GoogleTest)
-gtest_discover_tests(unit_tests)
+gtest_discover_tests(test_graph)
+
+# Testing Min Heap
+add_executable(test_heap
+    test_min_heap.cpp
+)
+
+target_link_libraries(test_heap PRIVATE
+    heap_lib
+    GTest::gtest_main
+)
+
+gtest_discover_tests(test_heap)

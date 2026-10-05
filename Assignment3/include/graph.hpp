@@ -1,69 +1,62 @@
 #pragma once
 
-#include <vector>
-#include <tuple>
-
+#include <iostream>
+#include <unordered_set>
+#include <unordered_map>
 
 namespace Graph{
 
-    using edgeList = std::vector<std::pair<Node*, double>>;
+// name of graph node can be any type
+template <typename T, typename Cost = double>
+class DirectedGraph{
+    
+    private:
+        std::unordered_set<T> verticies;        // list of verticies
+        std::unordered_map<T, std::unordered_map<T, Cost>> adjacency; // from: (to, cost)
+        
 
-    struct Node
-            {
-                // int id;
+    public:
 
-                // max 4 or 8? -- should i preallocate?
-                // each vertex is a pair of <node*, and edge weight>
-                edgeList parent_verticies;
-                edgeList child_verticies;
-            };
+        /*
+        * @return all vertices in the graph (a const reference)
+        */
+        const std::unordered_set<T>& getVerticies(){
+            return verticies;
+        }
+        
+        /*
+        * Add an edge between [from] and [to] with edge weight [cost]
+        */
+        void addEdge(T from, T to, Cost cost){
 
-    class Graph{
-        private:
-            std::vector<Node> graphNodeList_;
-            
+            // Cretaing new node auto checks if from/to node exists
+            verticies.insert(from);
+            verticies.insert(to);
 
-        public:
+            // add edge to adjacency matrix -- currently overwrites cost
+            adjacency[from][to] = cost;
+        }
 
-            std::vector<Node> getVerticies(){
+        /*
+        * @return a map where each key represents a vertex connected to [from] and the value represents the edge weight
+        */
+        std::unordered_map<T, Cost> getEdges(T from) const{
 
+            // Check if it is a valid vertex
+            if (verticies.find(from) == verticies.end()){
+                std::cerr << "Error: Graph vertex does not exist, no valid edges." << std::endl;
+                return {};
             }
 
-            void addEdge(Node* from, Node* to, double weight){
-                // check if the "from" node exists
-                // if it doesn't exist create it first
-                Node* node = new Node(from)
-            }
+            return adjacency.find(from)->second;
+        }
 
-            edgeList getEdges(Node* from){
-
-                // Create an empty vector
-
-            }
-
-            /*
-            * remove all edges and vertivies from the graph
-            */
-            void clear(){
-                // recursive??
-
-            }
-
-    }
+        /*
+        * remove all edges and vertivies from the graph
+        */
+        void clear(){
+            verticies.clear();
+            adjacency.clear();
+        }
+};
 }
-
-// Functions
-
-void getVerticies()
-// return the verticies int he graph
-
-void addEdge(from, to, cost)
-// Add edge between from, to with edge weight
-
-woid getEdges(from)
-// Get all edges that begin at from
-// return a map where each key represents a vertex connected to from and the value represents the edge weight
-//Map <vertex, double>
-
-void clear()
-// remove all edges and vertivies from the graph
