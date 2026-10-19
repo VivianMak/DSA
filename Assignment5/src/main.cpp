@@ -1,7 +1,15 @@
 #include <iostream>
 
+#include "matrix.hpp"
+
 int main()
-{
-    std::cout << "Hello from the new project!" << std::endl;
+{   
+    // name
+    using Matrix::Matrix;
+
+    Matrix<int> M(2, 3, 7);
+
+    std::cout << M;
+
     return 0;
 }

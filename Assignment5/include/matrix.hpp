@@ -3,6 +3,12 @@
 #include <stdexcept>
 #include <vector>
 
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <string>
+
 namespace Matrix{
 
 template <typename T>
@@ -122,7 +128,7 @@ class Matrix{
         }
 
         // Divide a n by n matrix into four n/2 by n/2 matricies
-        static std::vector<Matrix> strassen_divide(const Matrix& other) const{ // adding static so doesn't need an object to be called on
+        static std::vector<Matrix> strassen_divide(const Matrix& other){ // adding static so doesn't need an object to be called on
 
             // Check n by n matrix
             if (other.rows_ != other.cols_) {
@@ -172,6 +178,42 @@ class Matrix{
             std::vector<Matrix> this_matricies = strassen_divide(*this);
             std::vector<Matrix> other_matricies = strassen_divide(other);
 
+        }
+
+
+        // Pretty print matrix (AI generated code)
+        // Pretty-print with right-aligned columns.
+        // precision >= 0 prints floating-point values with that many decimals.
+        void print(std::ostream& os = std::cout, int precision = -1) const {
+
+            // Format every element once and track the widest entry in each column
+            std::vector<std::vector<std::string>> cells(rows_, std::vector<std::string>(cols_));
+            std::vector<size_t> widths(cols_, 0);
+
+            for (size_t r = 0; r < rows_; ++r) {
+                for (size_t c = 0; c < cols_; ++c) {
+                    std::ostringstream ss;
+                    if (precision >= 0) ss << std::fixed << std::setprecision(precision);
+                    ss << data_[r][c];
+                    cells[r][c] = ss.str();
+                    widths[c] = std::max(widths[c], cells[r][c].size());
+                }
+            }
+
+            for (size_t r = 0; r < rows_; ++r) {
+                os << "| ";
+                for (size_t c = 0; c < cols_; ++c) {
+                    os << std::setw(static_cast<int>(widths[c])) << cells[r][c];
+                    if (c + 1 < cols_) os << "  ";
+                }
+                os << " |\n";
+            }
+        }
+
+        // Lets you write: std::cout << M;
+        friend std::ostream& operator<<(std::ostream& os, const Matrix& m) {
+            m.print(os);
+            return os;
         }
 
 };
