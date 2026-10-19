@@ -1,28 +1,28 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.23)
 project(Assignment4 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
 ##### Build Libraries #####
 
 # MyModule
-add_library(mymodule_lib
-    src/mymodule.cpp
+add_library(sort_lib
+    src/sorting.cpp
 )
-target_include_directories(mymodule PUBLIC include)
+target_include_directories(sort_lib PUBLIC include)
 # target_link_libraries(mymodule PUBLIC Eigen3::Eigen)
 
 
-add_library(mymodule INTERFACE)
-target_include_directories(mymodule INTERFACE include)
+# add_library(mymodule INTERFACE)
+# target_include_directories(mymodule INTERFACE include)
 
-enable_testing()
-add_subdirectory(tests)
+# enable_testing()
+# add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE
-    # link your libraries here, e.g.: mymodule
+    sort_lib
 )
