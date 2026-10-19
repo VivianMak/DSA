@@ -11,6 +11,10 @@
 
 namespace Matrix{
 
+// NOTE:
+// Class allows you to make n by m matricies
+// Only checks square matricies if using strassens algorithm
+
 template <typename T>
 class Matrix{
 
@@ -128,6 +132,7 @@ class Matrix{
         }
 
         // Divide a n by n matrix into four n/2 by n/2 matricies
+        // @returns a vector of matricies
         static std::vector<Matrix> strassen_divide(const Matrix& other){ // adding static so doesn't need an object to be called on
 
             // Check n by n matrix
@@ -175,8 +180,25 @@ class Matrix{
         Matrix strassen_multiply(const Matrix& other){
             
             // Split the matricies first
-            std::vector<Matrix> this_matricies = strassen_divide(*this);
-            std::vector<Matrix> other_matricies = strassen_divide(other);
+            std::vector<Matrix> A = strassen_divide(*this);
+            std::vector<Matrix> B = strassen_divide(other);
+
+            // Strassens Algorithm -- creates 7 new matricies
+            Matrix<T> M1 = (A[0] + A[3]) * (B[1] + B[3]);
+            Matrix<T> M2 = (A[2] + A[3]) * B[0];
+            Matrix<T> M3 = A[1] * (B[1] - B[3]);
+            Matrix<T> M4 = A[3] * (B[2] - B[1]);
+            Matrix<T> M5 = (A[0] + A[1]) * B[3];
+            Matrix<T> M6 = (A[2] - A[0]) * (B[0] + B[1]);
+            Matrix<T> M7 = (A[1] - A[3]) * (B[2] + B[3]);
+
+            // Combine to 4 new blocks
+            Matrix<T> C1 = M1 + M4 - M5 + M7;
+            Matrix<T> C2 = M3 + M5;
+            Matrix<T> C3 = M2 + M4;
+            Matrix<T> C4 = M1 - M2 + M3 + M6;
+
+            // Recombine into one matrix
 
         }
 

@@ -4,6 +4,8 @@
 
 ## Strassen’s Algorithm for Matrix Multiplication
 
+![alt text](docs/strassen1.png)
+![alt text](docs/strassen2.png)
 
 ### Benchmarking
 
