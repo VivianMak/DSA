@@ -25,5 +25,5 @@ target_link_libraries(main PRIVATE
     sort_lib
 )
 
-add_executable(benchmark benchmark.cpp)
-target_link_libraries(benchmark sort_lib)
+add_executable(benchmark src/benchmark.cpp)
+target_link_libraries(benchmark PRIVATE sort_lib)
