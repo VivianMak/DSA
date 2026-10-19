@@ -122,21 +122,21 @@ class Matrix{
         }
 
         // Divide a n by n matrix into four n/2 by n/2 matricies
-        std::vector<Matrix> strassen_divide(){
+        static std::vector<Matrix> strassen_divide(const Matrix& other) const{ // adding static so doesn't need an object to be called on
 
             // Check n by n matrix
-            if (rows_ != cols_) {
+            if (other.rows_ != other.cols_) {
                 throw std::invalid_argument("Matrix dimensions must match for strassen divide.");
             }
             // Check even-ness of size n
-            if (rows_ % 2 != 0) {
+            if (other.rows_ % 2 != 0) {
                 throw std::invalid_argument("Matrix size must be even for strassen divide.");
             }
 
             // Create empty vector to store matricies
             std::vector<Matrix> result;
 
-            size_t half = rows_/2;
+            size_t half = other.rows_/2;
 
             for (size_t i = 0; i < 4; i++){
                 // i = 0 -> (0,0)   i = 1 -> (0,half)
@@ -150,7 +150,7 @@ class Matrix{
                 // Element-wise reassignment
                 for (size_t r = 0; r < half; ++r) {
                     for (size_t c = 0; c < half; ++c) {
-                        temp.data_[r][c] = data_[r + row_off][c + col_off];
+                        temp.data_[r][c] = other.data_[r + row_off][c + col_off];
                     }
                 }
 
@@ -161,7 +161,16 @@ class Matrix{
             return result;
         }
 
-        Matrix strassen_multiply(){
+        /**
+         * Multiply [this] matrix by [other].
+         * Your code should use Strassen's algorithm
+         * @return [this]*[other] if the dimensions are compatible and null otherwise
+         */
+        Matrix strassen_multiply(const Matrix& other){
+            
+            // Split the matricies first
+            std::vector<Matrix> this_matricies = strassen_divide(*this);
+            std::vector<Matrix> other_matricies = strassen_divide(other);
 
         }
 
