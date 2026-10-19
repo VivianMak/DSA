@@ -14,6 +14,7 @@ class Matrix{
         std::vector<std::vector<T>> data_;
 
     public:
+    
         // Example matrix to pass in:
         // Matrix<int> M = {
         //  {1, 2, 3},
@@ -27,15 +28,6 @@ class Matrix{
                 throw std::invalid_argument("Matrix dimensions must be greater than zero.");
             }
         }
-
-        // // Get value from matrix
-        // const T& get_val(int row, int col) const{
-        //     return (*this)(row, col);
-        // }
-        // // Set value in matrix
-        // void set_val(int row, int col, T val){
-        //     (*this)(row, col) = val;
-        // }
 
         // Using overloading operators () for element acces
         // ie M(1,2) = 2; to write
@@ -55,23 +47,59 @@ class Matrix{
             return data_[row][col];
         }
 
-
-        // Matrix multiplicatoin
-        Matrix operator*(const Matrix& matrix) const {
-
-            // Check matrix size if n = m
-            if (cols_ != matrix.rows_) {
-                throw std::invalid_argument("Matrix dimensions incompatible for multiplication.");
+        // Check if the other matrix is compatible for matrix operations
+        void check_valid(const Matrix& other) {
+            if (rows_!=other.rows_ || cols_!=other.cols_) {
+                throw std::invalid_argument("Matrix dimensions must match for addition.");
             }
+        }
+
+        // Matrix Addition
+        Matrix operator+(const Matrix& other) const {
+
+            check_valid(other);
+
+            // Create empty result matrix
+            Matrix result(rows_, other.cols_);
+
+            // Perform element-wise addition
+            for (size_t i = 0; i < data_.size(); ++i) {
+                result.data_[i] = this->data_[i] + other.data_[i];
+            }
+            return result;
+
+        }
+
+        // Matrix Subtraction
+        Matrix operator-(const Matrix& other) const {
+
+            check_valid(other);
+
+            // Create empty result matrix
+            Matrix result(rows_, other.cols_);
+
+            // Perform element-wise subtraction
+            for (size_t i = 0; i < data_.size(); ++i) {
+                result.data_[i] = this->data_[i] - other.data_[i];
+            }
+            return result;
+
+        }
+
+
+        // Matrix Multiplication
+        Matrix operator*(const Matrix& other) const {
+
+            check_valid(other);
             
             // Create empty result matrix
-            Matrix result(rows_, matrix.cols_, 0);
+            Matrix result(rows_, other.cols_);
 
             // Multiple other matrix column with this matrix row
             for (size_t i = 0; i < rows_; ++i) {
                 for (size_t k = 0; k < cols_; ++k) {
-                    for (size_t j = 0; j < matrix.cols_; ++j) {
-                        result(i, j) += (*this)(i, k) * matrix(k, j);
+                    for (size_t j = 0; j < other.cols_; ++j) {
+                        result(i, j) += (*this)(i, k) * other(k, j);
                     }
                 }
             }
@@ -80,6 +108,10 @@ class Matrix{
 
         // Divide a n by n matrix into four n/2 by n/2 matricies
         Matix straussen_divide(){
+
+        }
+
+        Matrix strassen_multiply(){
 
         }
 
