@@ -10,13 +10,13 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 
 # Test 1
-add_executable(unit_tests
-    # add your test .cpp files here, e.g.: test_mymodule.cpp
+add_executable(test_sorting
+    test_sorting.cpp
 )
 
-target_link_libraries(unit_tests PRIVATE
-    # link the libraries under test here, e.g.: mymodule
+target_link_libraries(test_sorting PRIVATE
     GTest::gtest_main
+    sort_lib
 )
 
-gtest_discover_tests(unit_tests)
+gtest_discover_tests(test_sorting)

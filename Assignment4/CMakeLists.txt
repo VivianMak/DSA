@@ -12,17 +12,18 @@ add_library(sort_lib
     src/sorting.cpp
 )
 target_include_directories(sort_lib PUBLIC include)
-# target_link_libraries(mymodule PUBLIC Eigen3::Eigen)
-
 
 # add_library(mymodule INTERFACE)
 # target_include_directories(mymodule INTERFACE include)
 
-# enable_testing()
-# add_subdirectory(tests)
+enable_testing()
+add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE
     sort_lib
 )
+
+add_executable(benchmark benchmark.cpp)
+target_link_libraries(benchmark sort_lib)
