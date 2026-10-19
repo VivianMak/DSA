@@ -10,14 +10,15 @@ int main()
     auto expected = a;
     std::sort(expected.begin(), expected.end());
 
-    // Sorting::insertion_sort(a);
-    // assert(a == expected && "Error: inserttion sort did not sort correctly.");
+    // Testing sorting algorithms
+    Sorting::insertion_sort(a);
+    assert(a == expected && "Error: inserttion sort did not sort correctly.");
 
-    // Sorting::selection_sort(a);
-    // assert(a == expected && "Error: selection sort did not sort correctly.");
+    Sorting::selection_sort(a);
+    assert(a == expected && "Error: selection sort did not sort correctly.");
 
-    // Sorting::heap_sort(a);
-    // assert(a == expected && "Error: heap sort did not sort correctly.");
+    Sorting::heap_sort(a);
+    assert(a == expected && "Error: heap sort did not sort correctly.");
 
     Sorting::radix_sort(a);
     assert(a == expected && "Error: radix sort did not sort correctly.");
