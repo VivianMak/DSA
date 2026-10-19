@@ -13,21 +13,42 @@ class Matrix{
         int cols_;
         std::vector<std::vector<T>> data_;
 
+        // Check if the other matrix is compatible for matrix operations
+        void check_valid(const Matrix& other) const{
+            if (rows_!=other.rows_ || cols_!=other.cols_) {
+                throw std::invalid_argument("Matrix dimensions must match for addition.");
+            }
+        }
+
     public:
-    
-        // Example matrix to pass in:
-        // Matrix<int> M = {
-        //  {1, 2, 3},
-        //  {4, 5, 6}
-        // };
-        Matrix(std::initializer_list<std::initializer_list<T>> list)
+        // DEFAULT CONSTRUCTOR
+        // rows x cols matrix filled with init (zero by default)
+        Matrix(size_t rows, size_t cols, const T& init = T())
+            : rows_(rows), cols_(cols), data_(rows, std::vector<T>(cols, init))
         {
-            rows_ = list.size();
-            cols_ = list.begin->size();
             if (rows_ == 0 || cols_ == 0) {
                 throw std::invalid_argument("Matrix dimensions must be greater than zero.");
             }
         }
+    
+        // Example matrix to pass in:
+        // Matrix<int> M = ({{1, 2, 3}, {4, 5, 6}});
+        Matrix(std::vector<std::vector<T>> list)
+            :rows_(list.size()), cols_(0), data_(std::move(list))
+        {
+            if (rows_ == 0 || data_[0].empty()) {
+                throw std::invalid_argument("Matrix dimensions must be greater than zero.");
+            }
+            cols_ = data_[0].size();
+            for (const auto& row : data_) {
+                if (row.size() != cols_) {
+                    throw std::invalid_argument("All rows must have the same number of columns.");
+                }
+            }
+        }
+
+        size_t rows() const { return rows_; }
+        size_t cols() const { return cols_; }
 
         // Using overloading operators () for element acces
         // ie M(1,2) = 2; to write
@@ -47,13 +68,7 @@ class Matrix{
             return data_[row][col];
         }
 
-        // Check if the other matrix is compatible for matrix operations
-        void check_valid(const Matrix& other) {
-            if (rows_!=other.rows_ || cols_!=other.cols_) {
-                throw std::invalid_argument("Matrix dimensions must match for addition.");
-            }
-        }
-
+        
         // Matrix Addition
         Matrix operator+(const Matrix& other) const {
 
@@ -107,7 +122,7 @@ class Matrix{
         }
 
         // Divide a n by n matrix into four n/2 by n/2 matricies
-        Matix straussen_divide(){
+        std::vector<Matrix> straussen_divide(){
 
         }
 
