@@ -16,7 +16,7 @@ class Matrix{
         // Check if the other matrix is compatible for matrix operations
         void check_valid(const Matrix& other) const{
             if (rows_!=other.rows_ || cols_!=other.cols_) {
-                throw std::invalid_argument("Matrix dimensions must match for addition.");
+                throw std::invalid_argument("Matrix dimensions must match.");
             }
         }
 
@@ -122,8 +122,43 @@ class Matrix{
         }
 
         // Divide a n by n matrix into four n/2 by n/2 matricies
-        std::vector<Matrix> straussen_divide(){
+        std::vector<Matrix> strassen_divide(){
 
+            // Check n by n matrix
+            if (rows_ != cols_) {
+                throw std::invalid_argument("Matrix dimensions must match for strassen divide.");
+            }
+            // Check even-ness of size n
+            if (rows_ % 2 != 0) {
+                throw std::invalid_argument("Matrix size must be even for strassen divide.");
+            }
+
+            // Create empty vector to store matricies
+            std::vector<Matrix> result;
+
+            size_t half = rows_/2;
+
+            for (size_t i = 0; i < 4; i++){
+                // i = 0 -> (0,0)   i = 1 -> (0,half)
+                // i = 2 -> (half,0)   i = 3 -> (half,half)
+                const size_t row_off = (i / 2) * half;
+                const size_t col_off = (i % 2) * half;
+
+                // Create temporary matrix of zeros
+                Matrix temp(half, half);
+
+                // Element-wise reassignment
+                for (size_t r = 0; r < half; ++r) {
+                    for (size_t c = 0; c < half; ++c) {
+                        temp.data_[r][c] = data_[r + row_off][c + col_off];
+                    }
+                }
+
+                // Reassign pointer owner rather than copy
+                result.push_back(std::move(temp)); 
+            }
+
+            return result;
         }
 
         Matrix strassen_multiply(){
