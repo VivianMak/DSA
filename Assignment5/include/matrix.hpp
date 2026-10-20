@@ -131,8 +131,10 @@ class Matrix{
             return result;
         }
 
-        // Divide a n by n matrix into four n/2 by n/2 matricies
-        // @returns a vector of matricies
+        /**
+         * Divide a n by n matrix into four n/2 by n/2 matricies
+         * @returns a vector of matricies in the order {top-left, top-right, bottom-left, bottom-right}
+         */
         static std::vector<Matrix> strassen_divide(const Matrix& other){ // adding static so doesn't need an object to be called on
 
             // Check n by n matrix
@@ -173,8 +175,44 @@ class Matrix{
         }
 
         /**
-         * Multiply [this] matrix by [other].
-         * Your code should use Strassen's algorithm
+         * Combine four n/2 by n/2 matricies back into n by n matrix
+         * @param m: list of matricies in the order {top-left, top-right, bottom-left, bottom-right}
+         * @return one matrix
+         */
+        static Matrix strassen_combine(const std::vector<Matrix>& m){
+            // Check for 4 sub-matricies
+            if (m.size() != 4){
+                throw std::invalid_argument("Needs exactly 4 quadrants to recombine.")
+            }
+
+            // Check sub-matrix size
+            const size_t half = q[0].rows_;
+            for (const auto& m : q) {
+                if (m.rows_ != half || m.cols_ != half) {
+                    throw std::invalid_argument("All quadrants must be the same square size.");
+                }
+            }
+
+            // Create recombined matrix of n by n size
+            Matrix result(2 * half, 2 * half);
+
+            // Recombine element by element
+            for (size_t i = 0; i < 4; ++i) {
+                const size_t row_off = (i / 2) * half;
+                const size_t col_off = (i % 2) * half;
+
+                for (size_t r = 0; r < half; ++r) {
+                    for (size_t c = 0; c < half; ++c) {
+                        result.data_[r + row_off][c + col_off] = q[i].data_[r][c];
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /**
+         * Multiply [this] matrix by [other] using Strassen's algorithm
          * @return [this]*[other] if the dimensions are compatible and null otherwise
          */
         Matrix strassen_multiply(const Matrix& other){
@@ -184,10 +222,10 @@ class Matrix{
             std::vector<Matrix> B = strassen_divide(other);
 
             // Strassens Algorithm -- creates 7 new matricies
-            Matrix<T> M1 = (A[0] + A[3]) * (B[1] + B[3]);
+            Matrix<T> M1 = (A[0] + A[3]) * (B[0] + B[3]);
             Matrix<T> M2 = (A[2] + A[3]) * B[0];
-            Matrix<T> M3 = A[1] * (B[1] - B[3]);
-            Matrix<T> M4 = A[3] * (B[2] - B[1]);
+            Matrix<T> M3 = A[0] * (B[1] - B[3]);
+            Matrix<T> M4 = A[3] * (B[2] - B[0]);
             Matrix<T> M5 = (A[0] + A[1]) * B[3];
             Matrix<T> M6 = (A[2] - A[0]) * (B[0] + B[1]);
             Matrix<T> M7 = (A[1] - A[3]) * (B[2] + B[3]);
@@ -199,6 +237,7 @@ class Matrix{
             Matrix<T> C4 = M1 - M2 + M3 + M6;
 
             // Recombine into one matrix
+            return strassen_combine({C1, C2, C3, C4});
 
         }
 
