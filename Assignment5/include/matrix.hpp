@@ -85,12 +85,12 @@ class Matrix{
             check_valid(other);
 
             // Create empty result matrix
-            Matrix result(rows_, other.cols_);
+            Matrix result(rows_, cols_);
 
             // Perform element-wise addition
-            for (size_t i = 0; i < data_.size(); ++i) {
-                result.data_[i] = this->data_[i] + other.data_[i];
-            }
+            for (size_t i = 0; i < rows_; ++i)
+                for (size_t j = 0; j < cols_; ++j)
+                    result.data_[i][j] = data_[i][j] + other.data_[i][j];
             return result;
 
         }
@@ -104,9 +104,9 @@ class Matrix{
             Matrix result(rows_, other.cols_);
 
             // Perform element-wise subtraction
-            for (size_t i = 0; i < data_.size(); ++i) {
-                result.data_[i] = this->data_[i] - other.data_[i];
-            }
+            for (size_t i = 0; i < rows_; ++i)
+                for (size_t j = 0; j < cols_; ++j)
+                    result.data_[i][j] = data_[i][j] - other.data_[i][j];
             return result;
 
         }
@@ -115,7 +115,9 @@ class Matrix{
         // Matrix Multiplication
         Matrix operator*(const Matrix& other) const {
 
-            check_valid(other);
+            if (cols_ != other.rows_) {
+                throw std::invalid_argument("Matrix dimensions incompatible for multiplication.");
+            }
             
             // Create empty result matrix
             Matrix result(rows_, other.cols_);
@@ -179,15 +181,15 @@ class Matrix{
          * @param m: list of matricies in the order {top-left, top-right, bottom-left, bottom-right}
          * @return one matrix
          */
-        static Matrix strassen_combine(const std::vector<Matrix>& m){
+        static Matrix strassen_combine(const std::vector<Matrix>& mats){
             // Check for 4 sub-matricies
-            if (m.size() != 4){
-                throw std::invalid_argument("Needs exactly 4 quadrants to recombine.")
+            if (mats.size() != 4){
+                throw std::invalid_argument("Needs exactly 4 quadrants to recombine.");
             }
 
             // Check sub-matrix size
-            const size_t half = q[0].rows_;
-            for (const auto& m : q) {
+            const size_t half = mats[0].rows_;
+            for (const auto& m : mats) {
                 if (m.rows_ != half || m.cols_ != half) {
                     throw std::invalid_argument("All quadrants must be the same square size.");
                 }
@@ -203,7 +205,7 @@ class Matrix{
 
                 for (size_t r = 0; r < half; ++r) {
                     for (size_t c = 0; c < half; ++c) {
-                        result.data_[r + row_off][c + col_off] = q[i].data_[r][c];
+                        result.data_[r + row_off][c + col_off] = mats[i].data_[r][c];
                     }
                 }
             }
@@ -215,7 +217,7 @@ class Matrix{
          * Multiply [this] matrix by [other] using Strassen's algorithm
          * @return [this]*[other] if the dimensions are compatible and null otherwise
          */
-        Matrix strassen_multiply(const Matrix& other){
+        Matrix strassen_multiply(const Matrix& other) const{
             
             // Split the matricies first
             std::vector<Matrix> A = strassen_divide(*this);

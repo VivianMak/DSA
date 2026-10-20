@@ -9,13 +9,24 @@
 #include <string>
 
 // pointer to function
-using CalcFn = void (*)(std::vector<int>&);
+using CalcFn = Matrix::Matrix<int> (*)(const Matrix::Matrix<int>&, const Matrix::Matrix<int>&);
 template <typename T>
 using Mat = Matrix::Matrix<T>;
 
+Mat<int> strassen_fn(const Mat<int>& a, const Mat<int>& b)
+{
+    return a.strassen_multiply(b);
+}
+
+Mat<int> default_fn(const Mat<int>& a, const Mat<int>& b)
+{
+    return a * b;
+}
+
+
 Mat<int> make_random_matrix(std::size_t size, std::mt19937& rng)
 {
-    std::uniform_int_distribution<int> dist(0, 99999);
+    std::uniform_int_distribution<int> dist(0, 9);
 
     // Mak a random matrix of M by M size
     Mat<int> M(size, size);
@@ -28,11 +39,10 @@ Mat<int> make_random_matrix(std::size_t size, std::mt19937& rng)
     return M;
 }
 
-// Takes `data` by value so each call sorts its own copy
-double time_strassen(CalcFn sort, std::vector<int> data)
+double time_strassen(CalcFn multiply, Mat<int> matrix, Mat<int> other)
 {
     auto start = std::chrono::steady_clock::now();
-    sort(data);
+    Mat<int> result = multiply(matrix, other);
     auto end = std::chrono::steady_clock::now();
     return std::chrono::duration<double>(end - start).count();   // seconds
 }
@@ -50,7 +60,8 @@ void benchmark(const std::string& name, CalcFn multiply,
         for (int i = 0; i < trials; i++)
         {
             Mat<int> matrix = make_random_matrix(size, rng);
-            times.push_back(time_sort(multiply, matrix));
+            Mat<int> other = make_random_matrix(size, rng);
+            times.push_back(time_strassen(multiply, matrix, other));
         }
 
         // find the average
@@ -63,10 +74,10 @@ void benchmark(const std::string& name, CalcFn multiply,
 int main()
 {
     // List size factors
-    const std::vector<std::size_t> sizes = {10, 100, 1000}; //, 10000, 100000, 200000};
+    const std::vector<std::size_t> sizes = {10, 2000}; //{10, 100, 1000}; //, 10000, 100000, 200000};
     const int trials = 5;
 
     // Benchmarking sorting algorithms
-    benchmark("strassen", Matrix::strassen_combine, sizes, trials);
-    benchmark("multiply", Matrix::selection_sort, sizes, trials);    
+    // benchmark("strassen", strassen_fn, sizes, trials);
+    benchmark("multiply", default_fn, sizes, trials);    
 }
