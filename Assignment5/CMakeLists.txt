@@ -16,7 +16,7 @@ enable_testing()
 add_subdirectory(tests)
 
 # Main program executable
-add_executable(main src/main.cpp)
+add_executable(main src/main.cpp src/needleman_wunsch.cpp)
 target_link_libraries(main PRIVATE matrix_lib)
 
 # Benchmark executable
