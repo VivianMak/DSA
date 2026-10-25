@@ -21,10 +21,10 @@ class NeedlemanWunsch {
 
         void table_init();
 
-        void find_global_alignment();
+        std::pair<std::string, std::string>
+        find_global_alignment();
 
         int score() const { return score_; }
-        const std::pair<std::string, std::string>& alignment() const { return aligned_; }
 
 
     private:
@@ -33,6 +33,7 @@ class NeedlemanWunsch {
 
         Mat dp;
         int score_ = 0;
+        int gap_ = -1;
         std::pair<std::string, std::string> aligned_;
 
  };
