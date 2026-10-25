@@ -12,10 +12,12 @@ include(GoogleTest)
 # Test 1
 add_executable(unit_tests
     test_matrix.cpp
+    test_NW.cpp
 )
 
 target_link_libraries(unit_tests PRIVATE
     matrix_lib
+    nw_lib
     GTest::gtest_main
 )
 

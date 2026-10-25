@@ -20,6 +20,12 @@ int main()
 
     auto [a1, a2] = nw.find_global_alignment();
 
+    // std::string g1 = "GT";
+    // std::string g2 = "GAT";
+
+    // NW::NeedlemanWunsch nw(g1, g2);
+    // auto [a1, a2] = nw.find_global_alignment();
+
     std::cout << "Score: " << nw.score() << '\n';
     std::cout << a1 << '\n';
     std::cout << a2 << '\n';
