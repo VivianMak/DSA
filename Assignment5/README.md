@@ -2,6 +2,8 @@
 
 ## The Matrix Class
 
+> *Note: My implementation for the matrix class allows for a rectangular matrix so I could use it for the NW algorithm, but the strassen algorithm checks for squareness.
+
 File: [include/matrix.hpp](include/matrix.hpp)
 
 ```cpp
@@ -72,10 +74,8 @@ My approach to compare the benchmarking between the strassen algorithm vs tradit
 
 ## Dynamic Programming for Aligning Protein Sequences
 
+I implemented the [Needleman Wunsch Algorithm](src/needleman_wunsch.cpp) and tested it against `genomeSnippet` and `testAgainst`. I got an alignment score of `143` with the following output sequence below:
 
-```
-Score: 143
-```
 ```
 TGGCGACAACCG-TAGCGGAATATTTTCGCGACCAGGGAAAACGGGTCGTGCTT-TTTATCGATTC-CATGACCCGTTATGCGC-GTGCTTTGCGAGACGTGGCACTGG-CGTCGG-GAGAGCGTCCGG-CTCGTCGAGGTTATCCCGCC-TCCGTA-TTCGAT-AATTTGCCCCG-CTTGCTGGAACGCCCAGGG---GCGACCAGCGAGGGAAGCATTACTGCCTTTTATACGGTACTGCTGGAAAGCGAGGA-A-GAGGCGGACCCGATGGCGGATGAAATTCGCTCTA-TCCTTGACGGTCA-CCTGTATCTGA-GCAGAAAGCTGGCCGGGCA-GGGACATTACCCGGCAATCGATGTACT-GAAAAGCGTAAGCCGCGTTTTT
 ```
