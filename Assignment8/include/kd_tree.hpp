@@ -2,6 +2,8 @@
 
 #include <array>
 #include <cstddef>
+#include <cmath>
+#include <stdexcept>
 
 #include "quick_select.hpp"
 
@@ -22,6 +24,7 @@ class KDTree{
             Point<T> point;
             Node* left;
             Node* right;
+            int depth;
 
             // Initialize node
             Node(const array<double, T>& point) : 
@@ -31,25 +34,67 @@ class KDTree{
         Node* root;
 
 
-        Node* build_tree(std::vector<points> points, int depth){
+        Node* build_tree(std::vector<Point> points, int depth){
+
+            int n = sizeof(points);
+
+            // Mod dimensions
+            int dim = depth % K;
+
+            // Median index to find
+            int median = n - (n / i);
 
             // Get the left/right leaf via quick select of median
-            int i = QS:quick_select(points, depth);
+            int i = QS::quick_select(points, l, r, median, dim);
 
+            // Create node and recursively make subtree
+            Node n.point(points[i]);
+            n.depth = depth;
+            n.left = build_tree(points[0 : i-1], depth + 1);
+            n.right = build_tree(points[i+1 : n-1], depth + 1)
 
+            // Return the root of the tree
+            return n;         
         }
 
-
-        
 
         /**
-         * Return the distance between the node and target node
+         * Return the distance between the node and target node.
+         * Assume using euclidean distance.
          */
-        double dist_func(Node* node, Node* target){
+        double dist(Node* node, Point target){
+
+            // 2D point (x,y)
+            if (std::size(node->point) == 2){
+                return std::sqrt(
+                    (node->point(0) - target(0) * node->point(0) - target(0)) + 
+                    (node->point(1) - target(1) * node->point(1) - target(1))
+                );
+            }
+
+            // 3D point (x,y,z)
+            if (std::size(node->point) == 3){
+                return std::sqrt(
+                    (node->point(0) - target(0) * node->point(0) - target(0)) + 
+                    (node->point(1) - target(1) * node->point(1) - target(1))
+                );
+            }
+
+
+            throw std::out_of_range("Can't be computed using Euclidean distance.");
 
         }
 
-        Node* nearest_helper(Node* root, const point& target, int depth)
+        
+        Node* closest(Point target, Node* a, Node*b){
+
+            // Find smallest distance
+            if (dist(a, target) < dist(b, target))
+                return a;
+            
+            // Return node
+            return b;
+        }
 
 
         
@@ -59,27 +104,37 @@ class KDTree{
 
             /**
              * Find nearest neighbors
+             * 
+             * @param root: root node
+             * @param target: target point, doesn't have to be in the tree
+             * @param depth: the total depth of the tree
+             * 
+             * @return the best (closest) node to the target point
              */
 
-            point nearestNeighbors(const point& target){
+            Node nearestNeighbors(Node* root, const Point& target, int depth){
 
                 // Check valid tree
                 if (root == nullptr) return nullptr;
 
-                // Sort list accordig to 1st dimension
+                Node temp;
 
+                if (target(depth % K) < root.point(depth % K)){
+                    temp = nearestNeighbors(root->left, target, depth+1);
+                    other = root->right;
+                } else{
+                    temp = nearestNeighbors(root->right, target, depth+1);
+                    other = root->left;
+                }
 
-                // Get the median
-
-
-                // Find the 
-
-
+                Node best = closest(target, root, temp);
 
                 // Recurse back up the tree and check the other leaf
+                temp = nearestNeighbors(other, target, depth+1);
+                best = closest(target, best, temp);
 
 
-                return closest;
+                return best;
             }
 
 

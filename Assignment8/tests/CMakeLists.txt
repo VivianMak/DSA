@@ -11,11 +11,11 @@ include(GoogleTest)
 
 # Test 1
 add_executable(unit_tests
-    # add your test .cpp files here, e.g.: test_mymodule.cpp
+    test_quick_select.cpp
 )
 
 target_link_libraries(unit_tests PRIVATE
-    # link the libraries under test here, e.g.: mymodule
+    kdtree_lib
     GTest::gtest_main
 )
 

@@ -7,22 +7,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ##### Build Libraries #####
 
-# MyModule
-add_library(mymodule_lib
-    src/mymodule.cpp
-)
-target_include_directories(mymodule PUBLIC include)
-# target_link_libraries(mymodule PUBLIC Eigen3::Eigen)
-
-
-add_library(mymodule INTERFACE)
-target_include_directories(mymodule INTERFACE include)
+# KD tree + quick select (header-only)
+add_library(kdtree_lib INTERFACE)
+target_include_directories(kdtree_lib INTERFACE include)
 
 enable_testing()
 add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)
-target_link_libraries(main PRIVATE
-    # link your libraries here, e.g.: mymodule
-)
+target_link_libraries(main PRIVATE kdtree_lib)
