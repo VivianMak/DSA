@@ -24,34 +24,47 @@ class KDTree{
             Point<T> point;
             Node* left;
             Node* right;
-            int depth;
 
             // Initialize node
-            Node(const array<double, T>& point) : 
+            Node(const Point<K>& point) : 
                 point(point), left(nullptr), right(nullptr) {}
         };
 
+        // Root node
         Node* root;
 
 
-        Node* build_tree(std::vector<Point> points, int depth){
-
-            int n = sizeof(points);
+        /**
+         * Building subtree from left to right element. 
+         * Points at next nodes are detected by quick select
+         * 
+         * @param points: all points to build tree
+         * @param l:
+         * @param r: 
+         * @param depth:
+         * 
+         * @return the root of the subtree or null
+         */
+        Node build_tree(std::vector<Point> points, int l, int r, int depth){
+                       
+            // Add base case for recursion
+            if (l > r){
+                return nullptr;
+            }
 
             // Mod dimensions
             int dim = depth % K;
 
             // Median index to find
-            int median = n - (n / i);
+            int k = (r - l) / 2 + 1;
 
             // Get the left/right leaf via quick select of median
-            int i = QS::quick_select(points, l, r, median, dim);
+            int med = QS::quick_select(points, l, r, k, dim);
 
             // Create node and recursively make subtree
-            Node n.point(points[i]);
-            n.depth = depth;
-            n.left = build_tree(points[0 : i-1], depth + 1);
-            n.right = build_tree(points[i+1 : n-1], depth + 1)
+            Node* n = new Node(points[med])
+            n->left = build_tree(points, l, mid-1, depth + 1);
+            n->right = build_tree(points, mid+1, r, depth + 1)
 
             // Return the root of the tree
             return n;         
@@ -61,32 +74,40 @@ class KDTree{
         /**
          * Return the distance between the node and target node.
          * Assume using euclidean distance.
+         * 
+         * @param node: node to calculate distance from
+         * @param target: target K dimensional points
          */
-        double dist(Node* node, Point target){
+        double dist(Node* node, const Point<K>& target){
+
+            if (node == nullptr) return nullptr;
 
             // 2D point (x,y)
-            if (std::size(node->point) == 2){
+            if (K == 2){
                 return std::sqrt(
-                    (node->point(0) - target(0) * node->point(0) - target(0)) + 
-                    (node->point(1) - target(1) * node->point(1) - target(1))
+                    ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
+                    ((node->point[1] - target[1]) * (node->point[1] - target[1]))
                 );
             }
 
             // 3D point (x,y,z)
-            if (std::size(node->point) == 3){
+            if (K == 3){
                 return std::sqrt(
-                    (node->point(0) - target(0) * node->point(0) - target(0)) + 
-                    (node->point(1) - target(1) * node->point(1) - target(1))
+                    ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
+                    ((node->point[1] - target[1]) * (node->point[1] - target[1])) + 
+                    ((node->point[2] - target[2]) * (node->point[2] - target[2]))
                 );
             }
 
-
+            // Throw error
             throw std::out_of_range("Can't be computed using Euclidean distance.");
-
         }
 
         
         Node* closest(Point target, Node* a, Node*b){
+
+            // Check for null node
+            if (a == nullptr || b == nullptr) return nullptr;
 
             // Find smallest distance
             if (dist(a, target) < dist(b, target))
@@ -100,7 +121,11 @@ class KDTree{
         
     
         public:
-            KDTree() : root(nullptr) {}
+
+            KDTree(std::vector<Point<K>> points) : root(nullptr) {
+                // build kd tree
+                root = build_tree(points, 0, (int)points.size() - 1, 0);
+            }
 
             /**
              * Find nearest neighbors

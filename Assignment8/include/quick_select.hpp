@@ -53,6 +53,7 @@ namespace QS{
      * @param l: left most element
      * @param r: right most element
      * @param k: kth element you are looking for (ie k is the median index)
+     * @param dim: the dimension we are sorting against given the depth
      * 
      * Return index of smalles/targest element in array
      */
