@@ -29,12 +29,17 @@ int main()
 
     KDTree::KDTree<K> tree(points);
 
-    KDTree::Point<K> target = {2, 3, 13};
+    KDTree::Point<K> target = {2, 3, 100};
 
     KDTree::Point<K> best = tree.nearest(target);
 
     std::cout << "Target:  (" << target[0] << ", " << target[1] << ", " << target[2] << ")\n";
     std::cout << "Nearest: (" << best[0] << ", " << best[1] << ", " << best[2] << ")\n";
+
+    // Brute Force Comparison
+    KDTree::Point<K> bestBF = tree.nearestBF(target);
+    std::cout << "Nearest (BF): (" << bestBF[0] << ", " << bestBF[1] << ", " << bestBF[2] << ")\n";
+
 
 
     return 0;

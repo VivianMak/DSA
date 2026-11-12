@@ -33,6 +33,8 @@ class KDTree{
 
         // Root node
         Node* root;
+        // All points on the tree (BF search)
+        std::vector<Point<K>> all_points;
 
 
         /**
@@ -117,22 +119,74 @@ class KDTree{
             return b;
         }
 
+        Point<K> closest(const Point<K>& target, const Point<K>& a, const Point<K>& b){
+
+            // Find smallest distance
+            if (dist_sq(a, target) < dist_sq(b, target))
+                return a;
+
+            // Return point
+            return b;
+        }
+
+        /**
+         * Find nearest neighbors
+         * 
+         * @param root: root node
+         * @param target: target point, doesn't have to be in the tree
+         * @param depth: the total depth of the tree
+         * 
+         * @return the best (closest) node to the target point
+         */
+
+        Node* nearestNeighbors(Node* root, const Point<K>& target, int depth){
+
+            // Check valid tree
+            if (root == nullptr) return nullptr;
+
+            Node* temp; 
+            Node* other;
+
+            int dim = depth % K;
+
+            if (target[dim] < root->point[dim]){
+                temp = nearestNeighbors(root->left, target, depth+1);
+                other = root->right;
+            } else{
+                temp = nearestNeighbors(root->right, target, depth+1);
+                other = root->left;
+            }
+
+            Node* best = closest(target, root, temp);
+
+            // Recurse back up the tree and check the other leaf
+            double diff = target[dim] - root->point[dim];
+
+            if (diff * diff < dist_sq(best->point, target)) {
+                // search the other subtree
+                temp = nearestNeighbors(other, target, depth+1);
+                best = closest(target, best, temp);
+            }
+
+            return best;
+        }
+
 
         
     
         public:
 
-            KDTree(std::vector<Point<K>> points) : root(nullptr) {
+            KDTree(std::vector<Point<K>> points) : root(nullptr), all_points(points) {
                 // build kd tree
                 root = build_tree(points, 0, (int)points.size() - 1, 0);
             }
 
             /**
-             * Find the point in the tree closest to target.
+             * Find the point in the tree closest to target, using kd trees
              *
              * @param target: target point, doesn't have to be in the tree
              *
-             * @return the closest point
+             * @return closest point
              */
             Point<K> nearest(const Point<K>& target){
 
@@ -144,49 +198,29 @@ class KDTree{
                 return nearestNeighbors(root, target, 0)->point;
             }
 
-            /**
-             * Find nearest neighbors
+            /** Find the point in the tree closes to target, using brute force
              * 
-             * @param root: root node
-             * @param target: target point, doesn't have to be in the tree
-             * @param depth: the total depth of the tree
+             * @param points: all points 
+             * @param target: target point
              * 
-             * @return the best (closest) node to the target point
+             * @return closest point
              */
+            Point<K> nearestBF(const Point<K>& target){
 
-            Node* nearestNeighbors(Node* root, const Point<K>& target, int depth){
+                // check empty list
+                if (all_points.empty())
+                    throw std::out_of_range("Tree is empty.");
 
-                // Check valid tree
-                if (root == nullptr) return nullptr;
+                Point<K> best = all_points[0];
 
-                Node* temp; 
-                Node* other;
-
-                int dim = depth % K;
-
-                if (target[dim] < root->point[dim]){
-                    temp = nearestNeighbors(root->left, target, depth+1);
-                    other = root->right;
-                } else{
-                    temp = nearestNeighbors(root->right, target, depth+1);
-                    other = root->left;
-                }
-
-                Node* best = closest(target, root, temp);
-
-                // Recurse back up the tree and check the other leaf
-                double diff = target[dim] - root->point[dim];
-
-                if (diff * diff < dist_sq(best->point, target)) {
-                    // search the other subtree
-                    temp = nearestNeighbors(other, target, depth+1);
-                    best = closest(target, best, temp);
+                for (std::size_t i = 1; i < all_points.size(); i++){
+                    // call closest with point params
+                    best = closest(target, all_points[i], best);
                 }
 
                 return best;
             }
 
-
-    
+ 
 };
 } // namespace KDTree
