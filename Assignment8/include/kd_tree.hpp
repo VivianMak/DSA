@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cmath>
 #include <stdexcept>
+#include <vector>
 
 #include "quick_select.hpp"
 
@@ -62,9 +63,9 @@ class KDTree{
             int med = QS::quick_select(points, l, r, k, dim);
 
             // Create node and recursively make subtree
-            Node* n = new Node(points[med])
-            n->left = build_tree(points, l, mid-1, depth + 1);
-            n->right = build_tree(points, mid+1, r, depth + 1)
+            Node* n = new Node(points[med]);
+            n->left = build_tree(points, l, med-1, depth + 1);
+            n->right = build_tree(points, med+1, r, depth + 1);
 
             // Return the root of the tree
             return n;         
@@ -78,25 +79,23 @@ class KDTree{
          * @param node: node to calculate distance from
          * @param target: target K dimensional points
          */
-        double dist(Node* node, const Point<K>& target){
+        double dist_sq(Node* node, const Point<K>& target){
 
-            if (node == nullptr) return nullptr;
+            // TODO: make for loop
 
             // 2D point (x,y)
             if (K == 2){
-                return std::sqrt(
-                    ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
-                    ((node->point[1] - target[1]) * (node->point[1] - target[1]))
-                );
+                return
+                ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
+                ((node->point[1] - target[1]) * (node->point[1] - target[1]));
             }
 
             // 3D point (x,y,z)
             if (K == 3){
-                return std::sqrt(
-                    ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
-                    ((node->point[1] - target[1]) * (node->point[1] - target[1])) + 
-                    ((node->point[2] - target[2]) * (node->point[2] - target[2]))
-                );
+                return
+                ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
+                ((node->point[1] - target[1]) * (node->point[1] - target[1])) + 
+                ((node->point[2] - target[2]) * (node->point[2] - target[2]));
             }
 
             // Throw error
@@ -107,10 +106,11 @@ class KDTree{
         Node* closest(Point target, Node* a, Node*b){
 
             // Check for null node
-            if (a == nullptr || b == nullptr) return nullptr;
+            if (a == nullptr) return b;
+            if (b == nullptr) return a;
 
             // Find smallest distance
-            if (dist(a, target) < dist(b, target))
+            if (dist_sq(a->point, target) < dist_sq(b->point, target))
                 return a;
             
             // Return node
@@ -137,14 +137,17 @@ class KDTree{
              * @return the best (closest) node to the target point
              */
 
-            Node nearestNeighbors(Node* root, const Point& target, int depth){
+            Node* nearestNeighbors(Node* root, const Point<K>& target, int depth){
 
                 // Check valid tree
                 if (root == nullptr) return nullptr;
 
-                Node temp;
+                Node* temp; 
+                Node* other;
 
-                if (target(depth % K) < root.point(depth % K)){
+                int dim = depth % K;
+
+                if (target[dim] < root->point[dim]){
                     temp = nearestNeighbors(root->left, target, depth+1);
                     other = root->right;
                 } else{
@@ -152,12 +155,16 @@ class KDTree{
                     other = root->left;
                 }
 
-                Node best = closest(target, root, temp);
+                Node* best = closest(target, root, temp);
 
                 // Recurse back up the tree and check the other leaf
-                temp = nearestNeighbors(other, target, depth+1);
-                best = closest(target, best, temp);
+                double diff = target[dim] - root->point[dim];
 
+                if (diff * diff < dist_sq(best->point, target)) {
+                    // search the other subtree
+                    temp = nearestNeighbors(other, target, depth+1);
+                    best = closest(target, best, temp);
+                }
 
                 return best;
             }
@@ -166,18 +173,3 @@ class KDTree{
     
 };
 } // namespace KDTree
-
-
-
-class KDTree<K>
-  private:
-    struct Node { point, left, right }
-    Node* root
-    Node*  build_helper(points, depth)
-    Node*  nearest_helper(Node* node, const point& target, int depth)
-    double dist_sq(const point& a, const point& b)
-    void   destroy(Node* node)
-  public:
-    KDTree(const vector<point>& points)   // calls build_helper
-    ~KDTree()                             // calls destroy
-    point nearest(const point& target)    // calls nearest_helper
