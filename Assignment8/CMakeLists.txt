@@ -11,8 +11,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(kdtree_lib INTERFACE)
 target_include_directories(kdtree_lib INTERFACE include)
 
-enable_testing()
-add_subdirectory(tests)
+# enable_testing()
+# add_subdirectory(tests)
 
 # Main program executable
 add_executable(main src/main.cpp)

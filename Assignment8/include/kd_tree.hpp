@@ -15,14 +15,14 @@ namespace KDTree{
 template <std::size_t K>
 using Point = std::array<double, K>;
 
-template <std::size_t T>
+template <std::size_t K>
 class KDTree{
 
 
     private:
 
         struct Node{
-            Point<T> point;
+            Point<K> point;
             Node* left;
             Node* right;
 
@@ -46,7 +46,7 @@ class KDTree{
          * 
          * @return the root of the subtree or null
          */
-        Node build_tree(std::vector<Point> points, int l, int r, int depth){
+        Node* build_tree(std::vector<Point<K>>& points, int l, int r, int depth){
                        
             // Add base case for recursion
             if (l > r){
@@ -73,29 +73,29 @@ class KDTree{
 
 
         /**
-         * Return the distance between the node and target node.
+         * Return the squared distance between two points.
          * Assume using euclidean distance.
-         * 
-         * @param node: node to calculate distance from
-         * @param target: target K dimensional points
+         *
+         * @param a: first K dimensional point
+         * @param b: second K dimensional point
          */
-        double dist_sq(Node* node, const Point<K>& target){
+        double dist_sq(const Point<K>& a, const Point<K>& b){
 
             // TODO: make for loop
 
             // 2D point (x,y)
             if (K == 2){
                 return
-                ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
-                ((node->point[1] - target[1]) * (node->point[1] - target[1]));
+                ((a[0] - b[0]) * (a[0] - b[0])) +
+                ((a[1] - b[1]) * (a[1] - b[1]));
             }
 
             // 3D point (x,y,z)
             if (K == 3){
                 return
-                ((node->point[0] - target[0]) * (node->point[0] - target[0])) + 
-                ((node->point[1] - target[1]) * (node->point[1] - target[1])) + 
-                ((node->point[2] - target[2]) * (node->point[2] - target[2]));
+                ((a[0] - b[0]) * (a[0] - b[0])) +
+                ((a[1] - b[1]) * (a[1] - b[1])) +
+                ((a[2] - b[2]) * (a[2] - b[2]));
             }
 
             // Throw error
@@ -103,7 +103,7 @@ class KDTree{
         }
 
         
-        Node* closest(Point target, Node* a, Node*b){
+        Node* closest(const Point<K>& target, Node* a, Node*b){
 
             // Check for null node
             if (a == nullptr) return b;
@@ -125,6 +125,23 @@ class KDTree{
             KDTree(std::vector<Point<K>> points) : root(nullptr) {
                 // build kd tree
                 root = build_tree(points, 0, (int)points.size() - 1, 0);
+            }
+
+            /**
+             * Find the point in the tree closest to target.
+             *
+             * @param target: target point, doesn't have to be in the tree
+             *
+             * @return the closest point
+             */
+            Point<K> nearest(const Point<K>& target){
+
+                // Empty tree has no closest point
+                if (root == nullptr)
+                    throw std::out_of_range("Tree is empty.");
+
+                // Start the search at the root, depth 0
+                return nearestNeighbors(root, target, 0)->point;
             }
 
             /**
