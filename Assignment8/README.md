@@ -9,6 +9,8 @@ The KD-Tree has the following capabilities:
 - Starting from an empty tree and given a list of k-dimensional points, build a K-D tree
 - Given a single, k-dimensional query point, return the nearest neighbor in the K-D tree using the structure of the tree
 
+The data structure was incrementally testing via `main.cpp` during development. An example usage is also shown in the file (commented) above the benchmarking code.
+
 ```cpp
 // K-dimensional point
 template <std::size_t K>
