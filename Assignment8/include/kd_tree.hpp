@@ -171,15 +171,41 @@ class KDTree{
             return best;
         }
 
+        /**
+         * Free every node in the subtree (post-order: children before parent,
+         * so we never read a node after deleting it)
+         *
+         * @param node: root of the subtree to free, may be null
+         */
+        void destroy(Node* node){
 
-        
-    
+            // Empty subtree, nothing to free
+            if (node == nullptr) return;
+
+            destroy(node->left);
+            destroy(node->right);
+            delete node;
+        }
+
+
+
+
         public:
 
             KDTree(std::vector<Point<K>> points) : root(nullptr), all_points(points) {
                 // build kd tree
                 root = build_tree(points, 0, (int)points.size() - 1, 0);
             }
+
+            // Free all nodes when the tree goes out of scope
+            ~KDTree(){
+                destroy(root);
+            }
+
+            // No copying: a copy would share the same nodes, and both
+            // destructors would delete them (double free)
+            KDTree(const KDTree&) = delete;
+            KDTree& operator=(const KDTree&) = delete;
 
             /**
              * Find the point in the tree closest to target, using kd trees
