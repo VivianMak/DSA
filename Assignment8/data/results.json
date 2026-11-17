@@ -1,0 +1,15 @@
+[
+  {"k": 2, "numPoints": 10,      "buildTime": 0.0044,   "queryTime": 0.0844, "bruteForceTime": 0.0504},
+  {"k": 2, "numPoints": 100,     "buildTime": 0.0238,   "queryTime": 0.2043, "bruteForceTime": 0.4123},
+  {"k": 2, "numPoints": 1000,    "buildTime": 0.2247,   "queryTime": 0.2516, "bruteForceTime": 1.7817},
+  {"k": 2, "numPoints": 10000,   "buildTime": 1.2739,   "queryTime": 0.1706, "bruteForceTime": 7.7636},
+  {"k": 2, "numPoints": 100000,  "buildTime": 14.3317,  "queryTime": 0.3480, "bruteForceTime": 76.2749},
+  {"k": 2, "numPoints": 1000000, "buildTime": 164.9299, "queryTime": 0.8065, "bruteForceTime": 827.5976},
+
+  {"k": 3, "numPoints": 10,      "buildTime": 0.0072,   "queryTime": 0.1475, "bruteForceTime": 0.0780},
+  {"k": 3, "numPoints": 100,     "buildTime": 0.0102,   "queryTime": 0.1367, "bruteForceTime": 0.1610},
+  {"k": 3, "numPoints": 1000,    "buildTime": 0.1159,   "queryTime": 0.2687, "bruteForceTime": 1.3522},
+  {"k": 3, "numPoints": 10000,   "buildTime": 1.4493,   "queryTime": 0.4425, "bruteForceTime": 12.2622},
+  {"k": 3, "numPoints": 100000,  "buildTime": 16.3472,  "queryTime": 0.8234, "bruteForceTime": 120.8086},
+  {"k": 3, "numPoints": 1000000, "buildTime": 194.6365, "queryTime": 1.4316, "bruteForceTime": 1481.6258}
+]
