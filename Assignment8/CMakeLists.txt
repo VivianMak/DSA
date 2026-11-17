@@ -4,6 +4,12 @@ project(Assignment8 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Default to an optimized build so benchmark timings are realistic
+# (override with -DCMAKE_BUILD_TYPE=Debug when debugging)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
 
 ##### Build Libraries #####
 
