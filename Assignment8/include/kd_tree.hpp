@@ -83,25 +83,15 @@ class KDTree{
          */
         double dist_sq(const Point<K>& a, const Point<K>& b){
 
-            // TODO: make for loop
+            double sum = 0.0;
 
-            // 2D point (x,y)
-            if (K == 2){
-                return
-                ((a[0] - b[0]) * (a[0] - b[0])) +
-                ((a[1] - b[1]) * (a[1] - b[1]));
+            // Add the squared difference in each dimension (x, y, z, ...)
+            for (std::size_t i = 0; i < K; i++){
+                double diff = a[i] - b[i];
+                sum += diff * diff;
             }
 
-            // 3D point (x,y,z)
-            if (K == 3){
-                return
-                ((a[0] - b[0]) * (a[0] - b[0])) +
-                ((a[1] - b[1]) * (a[1] - b[1])) +
-                ((a[2] - b[2]) * (a[2] - b[2]));
-            }
-
-            // Throw error
-            throw std::out_of_range("Can't be computed using Euclidean distance.");
+            return sum;
         }
 
         
