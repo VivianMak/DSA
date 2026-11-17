@@ -49,10 +49,9 @@ int main()
     // Benchmarking KDTree vs brute force //
 
     // Configs
-    constexpr std::size_t K = 2;
+    constexpr std::size_t K = 10;
     const int numRuns = 5;
-    // std::vector<int> numPointsList = {10, 100, 1000, 10000, 100000, 1000000};
-    std::vector<int> numPointsList = {10000000, 100000000, 1000000000};
+    std::vector<int> numPointsList = {10, 100, 1000, 10000, 100000, 1000000};
 
     std::cout << std::fixed << std::setprecision(4);
     std::cout << "K | numPoints | buildTime (ms) | queryTime (ms) | bruteForceTime (ms)\n";

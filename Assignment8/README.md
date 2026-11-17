@@ -2,16 +2,52 @@
 
 ## Building the KD-Tree
 
-You should support the following capabilities.
+File: [include/kd_tree.hpp](include/kd_tree.hpp)
 
-- Starting from an empty tree and given a list of k-dimensional points, build a K-D tree.
-- Given a single, k-dimensional query point, return the nearest neighbor in the K-D tree (you must use the structure of your tree and not default to brute force search).
+The KD-Tree has the following capabilities:
 
-You DO NOT need to support any of the following capabilities
+- Starting from an empty tree and given a list of k-dimensional points, build a K-D tree
+- Given a single, k-dimensional query point, return the nearest neighbor in the K-D tree using the structure of the tree
 
-- Incrementally add new points to your K-D tree
-- Delete points from your K-D tree
-- Look for nearest neighbors of multiple points simultaneously
+```cpp
+// K-dimensional point
+template <std::size_t K>
+using Point = std::array<double, K>;
+
+template <std::size_t K>
+class KDTree{
+
+    // Nodes that contain data, pointers to left and right child node
+    struct Node{
+        Point<K> point;
+        Node* left;
+        Node* right;
+
+        // Initialize node
+        Node(const Point<K>& point) : 
+            point(point), left(nullptr), right(nullptr) {}
+    };
+
+    Node* root;                         // Root node
+    std::vector<Point<K>> all_points;   // List of points for BF
+
+
+    // Building kd-tree recursively
+    Node* build_tree(std::vector<Point<K>>& points, int l, int r, int depth) {};
+
+    // Calculate euclidean distance as a metric for closeness
+    double dist_sq(const Point<K>& a, const Point<K>& b) {};
+    Node* closest(const Point<K>& target, Node* a, Node*b) {};
+
+    // Given root of kd-tree and target points, return nearest point
+    Node* nearestNeighbors(Node* root, const Point<K>& target, int depth) {};
+
+    // Destroy nodes to manage memory
+    void destroy(Node* node) {};
+}
+```
+
+
 
 ### Quick Select Implementation (1pt Extra Credit)
 
@@ -53,7 +89,7 @@ Point<K> nearestBF(const Point<K>& target){
 
 File: [include/benchmark.hpp](include/benchmark.hpp)
 
-The goal is to compare the KD tree data structure and brute force searching when solvign the nearest neighbor problem. I have used node dimentions of `K=2` and `K=3`, searching over point lengths of `{10, 100, 1000, 10000, 100000, 1000000}`, and searching for 1,000 random test points. The results below are averaged over 5 runs each. The use of the destroyer node clears up memory to prevent leakage.
+The goal is to compare the KD tree data structure and brute force searching when solvign the nearest neighbor problem. I have used node dimentions of `K = {2, 3, 5, 10}`, searching over point lengths of `{10, 100, 1000, 10000, 100000, 1000000}`, and searching for 1,000 random test points. The results below are averaged over 5 runs each. The use of the destroyer node clears up memory to prevent leakage.
 
 ### Experiment Results
 
@@ -75,11 +111,34 @@ The goal is to compare the KD tree data structure and brute force searching when
 | 3 | 100,000 | 16.3472 | 0.8234 | 120.8086 |
 | 3 | 1,000,000 | 194.6365 | 1.4316 | 1481.6258 |
 
+| K | numPoints | KD Build Time (ms) | KD Query Time (ms) | Brute Force (ms) |
+|--:|--:|--:|--:|--:|
+5 | 10 | 0.0067 | 0.1874 | 0.1545
+5 | 100 | 0.0177 | 0.8269 | 0.5922
+5 | 1000 | 0.1794 | 2.0063 | 3.2163
+5 | 10000 | 1.6475 | 3.6416 | 24.4082
+5 | 100000 | 19.3115 | 6.5530 | 251.9574
+5 | 1000000 | 225.7353 | 11.7831 | 2947.4568
+
+
+| K | numPoints | KD Build Time (ms) | KD Query Time (ms) | Brute Force (ms) |
+|--:|--:|--:|--:|--:|
+10 | 10 | 0.0068 | 0.2903 | 0.2787
+10 | 100 | 0.0272 | 2.3876 | 1.4625
+10 | 1000 | 0.1997 | 10.1585 | 4.6914
+10 | 10000 | 2.2450 | 81.2530 | 48.6349
+10 | 100000 | 27.1445 | 552.4229 | 502.0915
+10 | 1000000 | 316.8983 | 3381.2182 | 5805.5428
+
 Below is a graphical representation of the data above:
 
 ![](data/plot.png)
 
--You provide an interpretation of your benchmarking results and provide conclusions as to when brute force versus k-d trees would work better.
+From these plots, we can see that using KD-trees have a bigger effect on its optimization of compute time with lower dimensionality of points. The time difference is very drastic. As we get to higher dimensions, the appraoches begin to follow the same growth. In the `K = 10` plot, the 5th data point shows overlap of the time for either approach to find the nearest neighbor.
+
+However, apart from all of this, no matter how big the dimensionality, the time it takes to build the tree seems to be consistent. This makes a lot of sense because we are always only selecting from a vector based off of one data point.
+
+
 
 ## AI Acknowledgement
 - AI used for generating python script to plot data

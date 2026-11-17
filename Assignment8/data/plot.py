@@ -1,4 +1,5 @@
 import json
+import math
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -7,11 +8,18 @@ import matplotlib.pyplot as plt
 folder = Path(__file__).parent
 rows = json.loads((folder / "results.json").read_text())
 
-# One subplot per K
+# One subplot per K, wrapped into a grid with at most 2 plots per row
 ks = sorted({row["k"] for row in rows})
-fig, axes = plt.subplots(1, len(ks), figsize=(6 * len(ks), 4.5), squeeze=False)
+cols = min(len(ks), 2)
+grid_rows = math.ceil(len(ks) / cols)
+fig, axes = plt.subplots(grid_rows, cols, figsize=(6 * cols, 4.5 * grid_rows), squeeze=False)
+axes = axes.flatten()
 
-for ax, k in zip(axes[0], ks):
+# Hide any empty slot in the grid (e.g. 3 values of K leave one spare)
+for ax in axes[len(ks):]:
+    ax.axis("off")
+
+for ax, k in zip(axes, ks):
     data = [row for row in rows if row["k"] == k]
     sizes = [row["numPoints"] for row in data]
 
